@@ -1,0 +1,5 @@
+Iteration 1
+Scrum Master: Edmond
+Product Owner: Archit
+Repo Manager: Michael
+Team Member: Neil
