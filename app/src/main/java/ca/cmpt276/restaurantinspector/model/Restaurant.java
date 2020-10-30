@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Restaurant stores information about a restaurant including its list of inspections.
+ * Has Getters for its info including getInspectionList() that returns an iterable of its Inspections
+ */
 public class Restaurant {
     private final String TRACKING_NUMBER;
 
@@ -28,7 +32,7 @@ public class Restaurant {
         this.LONGITUDE = LONGITUDE;
     }
 
-    public Iterable<Inspection> getRestaurantList() {
+    public Iterable<Inspection> getInspectionList() {
         return () -> Collections.unmodifiableCollection(inspectionList).iterator();
     }
 

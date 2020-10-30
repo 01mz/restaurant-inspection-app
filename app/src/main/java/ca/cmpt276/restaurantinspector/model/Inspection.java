@@ -1,16 +1,19 @@
 package ca.cmpt276.restaurantinspector.model;
 
 import com.opencsv.CSVParser;
-import com.opencsv.CSVReader;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import ca.cmpt276.restaurantinspector.BuildConfig;
 
+/**
+ * Inspection stores information about an inspection including a list of violations found.
+ * Has Getters for its info including getViolationList() that returns an iterable of its Violations
+ * The list of violations can be empty (if the inspection found no violations).
+ */
 public class Inspection {
     private final String TRACKING_NUMBER;   // restaurant tracking number
     private final String INSPECTION_DATE;
@@ -43,12 +46,15 @@ public class Inspection {
         for(String violation : violations){
             try {
                 String[] fields = parser.parseLine(violation);
-                final int CODE = Integer.parseInt(fields[0]);
-                final boolean CRITICAL = isCritical(fields[1]);
-                final String DESCRIPTION = fields[2];
-                final boolean REPEAT = isRepeat(fields[3]);
 
-                violationList.add(new Violation(CODE, DESCRIPTION, CRITICAL, REPEAT));
+                if(fields.length == 4) {
+                    final int CODE = Integer.parseInt(fields[0]);
+                    final boolean CRITICAL = isCritical(fields[1]);
+                    final String DESCRIPTION = fields[2];
+                    final boolean REPEAT = isRepeat(fields[3]);
+
+                    violationList.add(new Violation(CODE, DESCRIPTION, CRITICAL, REPEAT));
+                }
             } catch (IOException ignored) {
 
             }

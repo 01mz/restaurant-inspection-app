@@ -1,5 +1,9 @@
 package ca.cmpt276.restaurantinspector.model;
 
+/**
+ * Violation stores information about a violation.
+ * Has Getters for its info.
+ */
 public class Violation {
     private final int CODE;
 
@@ -28,10 +32,10 @@ public class Violation {
                 type = t;
             }
         }
-
         return type;
     }
 
+    // Violation number
     public int getCODE() {
         return CODE;
     }
