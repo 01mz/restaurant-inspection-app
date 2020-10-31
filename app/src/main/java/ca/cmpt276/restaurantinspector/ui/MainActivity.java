@@ -1,15 +1,11 @@
 package ca.cmpt276.restaurantinspector.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.model.Data;
-import ca.cmpt276.restaurantinspector.model.Inspection;
-import ca.cmpt276.restaurantinspector.model.Restaurant;
-import ca.cmpt276.restaurantinspector.model.Violation;
 
 public class MainActivity extends AppCompatActivity {
     Data data;  // model
