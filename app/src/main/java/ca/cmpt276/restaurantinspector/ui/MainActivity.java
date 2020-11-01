@@ -30,7 +30,6 @@ import static ca.cmpt276.restaurantinspector.R.id.recyclerView;
 
 public class MainActivity extends AppCompatActivity {
     Data data = Data.getInstance();  // model
-    //ListView l;
     RecyclerView recyclerView;
 
     @Override
@@ -40,10 +39,9 @@ public class MainActivity extends AppCompatActivity {
         initializeModel();
 
 
-        ArrayList<Restaurant> list = new ArrayList<>();
+        List<Restaurant> list = new ArrayList<>();
         for (Restaurant r : data.getRestaurantList()) {
             list.add(r);
-            Toast.makeText(MainActivity.this,r.getNAME(),Toast.LENGTH_LONG).show();
         }
         RecyclerView recyclerView=findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -78,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Restaurant> list = new ArrayList<>();
         for (Restaurant r : data.getRestaurantList()) {
             list.add(r);
-            //Toast.makeText(MainActivity.this,"hi"+"",Toast.LENGTH_LONG).show();
         }
        // l= (ListView) findViewById(R.id.RestaurantList);
         RestaurantAdapter restaurantAdapter=new RestaurantAdapter(list,MainActivity.this);
