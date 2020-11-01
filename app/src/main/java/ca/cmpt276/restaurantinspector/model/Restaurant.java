@@ -59,4 +59,11 @@ public class Restaurant {
     protected void addInspection(Inspection inspection){
         inspectionList.add(inspection);
     }
+    @Override
+    public String toString() {
+        return
+                TRACKING_NUMBER +
+                        "  " + getADDRESS() +" "+ getNAME()+" ";
+    }
 }
+

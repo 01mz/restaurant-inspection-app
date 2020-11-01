@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -29,7 +31,8 @@ public class Data {
     // Singleton code
     private static Data instance = null;
 
-    private Data(){ }
+    private Data() {
+    }
 
     public static Data getInstance(){
         if(instance == null){
@@ -37,7 +40,6 @@ public class Data {
         }
         return instance;
     }
-
     public Iterable<Restaurant> getRestaurantList() {
         return () -> Collections.unmodifiableCollection(restaurants.values()).iterator();
     }
