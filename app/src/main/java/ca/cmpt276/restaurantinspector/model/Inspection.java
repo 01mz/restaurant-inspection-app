@@ -3,9 +3,12 @@ package ca.cmpt276.restaurantinspector.model;
 import com.opencsv.CSVParser;
 
 import java.io.IOException;
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import ca.cmpt276.restaurantinspector.BuildConfig;
 
@@ -101,11 +104,27 @@ public class Inspection {
         return NUM_NONCRITICAL;
     }
 
+    public int getTotalIssues(){
+        return NUM_CRITICAL + NUM_NONCRITICAL;
+    }
+
     public String getHAZARD_RATING() {
         return HAZARD_RATING;
     }
 
-    public Iterable<Violation> getViolationList() {
-        return () -> Collections.unmodifiableCollection(violationList).iterator();
+    public Violation getViolation(int index) {
+        return violationList.get(index);
+    }
+
+    public List<Violation> getViolationList() {
+        return Collections.unmodifiableList(violationList);
+    }
+
+    // https://stackoverflow.com/questions/14832151/how-to-get-month-name-from-calendar
+    private String getMonthStandaloneName(Month month) {
+        return month.getDisplayName(
+                TextStyle.FULL_STANDALONE,
+                Locale.getDefault()
+        );
     }
 }

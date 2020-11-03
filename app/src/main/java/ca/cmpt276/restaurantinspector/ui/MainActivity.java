@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.model.Data;
@@ -19,10 +20,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initializeModel();
 
-        /*
+
         // SOME SAMPLE MODEL/DATA USAGE
         for(Restaurant restaurant : data.getRestaurantList()) {
             Log.i("restaurantName", restaurant.getNAME());
+            Toast.makeText(this, restaurant.getNAME(), Toast.LENGTH_SHORT).show();
             for(Inspection inspection : restaurant.getInspectionList()) {
                 Log.i("inspectionDate", inspection.getINSPECTION_DATE());
                 for(Violation violation : inspection.getViolationList()) {
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        */
+
     }
 
     private void initializeModel() {
