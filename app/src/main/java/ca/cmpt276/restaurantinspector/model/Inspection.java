@@ -3,12 +3,9 @@ package ca.cmpt276.restaurantinspector.model;
 import com.opencsv.CSVParser;
 
 import java.io.IOException;
-import java.time.Month;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import ca.cmpt276.restaurantinspector.BuildConfig;
 
@@ -19,7 +16,7 @@ import ca.cmpt276.restaurantinspector.BuildConfig;
  */
 public class Inspection {
     private final String TRACKING_NUMBER;   // restaurant tracking number
-    private final String INSPECTION_DATE;
+    private final InspectionDate INSPECTION_DATE;
     private final String INSPECT_TYPE;
 
     private final int NUM_CRITICAL;
@@ -33,7 +30,7 @@ public class Inspection {
                          int NUM_CRITICAL, int NUM_NONCRITICAL, String HAZARD_RATING,
                          String VIOLATION_LUMP) {
         this.TRACKING_NUMBER = TRACKING_NUMBER;
-        this.INSPECTION_DATE = INSPECTION_DATE;
+        this.INSPECTION_DATE = new InspectionDate(INSPECTION_DATE);
         this.INSPECT_TYPE = INSPECT_TYPE;
         this.NUM_CRITICAL = NUM_CRITICAL;
         this.NUM_NONCRITICAL = NUM_NONCRITICAL;
@@ -88,7 +85,7 @@ public class Inspection {
         return TRACKING_NUMBER;
     }
 
-    public String getINSPECTION_DATE() {
+    public InspectionDate getINSPECTION_DATE() {
         return INSPECTION_DATE;
     }
 
@@ -120,11 +117,5 @@ public class Inspection {
         return Collections.unmodifiableList(violationList);
     }
 
-    // https://stackoverflow.com/questions/14832151/how-to-get-month-name-from-calendar
-    private String getMonthStandaloneName(Month month) {
-        return month.getDisplayName(
-                TextStyle.FULL_STANDALONE,
-                Locale.getDefault()
-        );
-    }
+
 }

@@ -2,12 +2,12 @@ package ca.cmpt276.restaurantinspector.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
  * Restaurant stores information about a restaurant including its list of inspections.
  * Has Getters for its info including getInspectionList() that returns an iterable of its Inspections
+ * The list of inspections can be empty (if there are no inspections associated with the restaurant).
  */
 public class Restaurant {
     private final String TRACKING_NUMBER;
@@ -61,6 +61,11 @@ public class Restaurant {
         return inspectionList.get(index);
     }
 
+    public boolean hasInspection(){
+        return inspectionList.size() != 0;
+    }
+
+    // Make sure Restaurant has at least one Inspection: call hasInspection() before use
     public Inspection getMostRecentInspection(){
         return inspectionList.get(0);
     }
@@ -71,7 +76,7 @@ public class Restaurant {
 
     // Sorted by most recent date
     protected void sortInspectionsByDate() {
-        // Date is formatted as YYYYMMDD so we can just compare the date strings in reverse
+        // Compare the inspection dates in "reverse" so a more recent date is treated as "lesser"
         inspectionList.sort((i1, i2) -> i2.getINSPECTION_DATE().compareTo(i1.getINSPECTION_DATE()));
     }
 
