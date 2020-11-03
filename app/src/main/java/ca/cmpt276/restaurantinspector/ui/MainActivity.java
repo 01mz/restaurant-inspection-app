@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.model.Data;
@@ -19,12 +20,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initializeModel();
 
+
         /*
         // SOME SAMPLE MODEL/DATA USAGE
         for(Restaurant restaurant : data.getRestaurantList()) {
             Log.i("restaurantName", restaurant.getNAME());
+            Log.i("inspectionDateSeparate", restaurant.getNAME());
+            Toast.makeText(this, restaurant.getNAME(), Toast.LENGTH_SHORT).show();
             for(Inspection inspection : restaurant.getInspectionList()) {
-                Log.i("inspectionDate", inspection.getINSPECTION_DATE());
+                Log.i("inspectionDate", inspection.getINSPECTION_DATE().toString());
+                Log.i("inspectionDate", inspection.getINSPECTION_DATE().getMonth());
+                Log.i("inspectionDateDaysAgo", "" + inspection.getINSPECTION_DATE().getDaysAgo());
+                Log.i("inspectionIsWithin30days?", "" + inspection.getINSPECTION_DATE().isWithinThirtyDays());
+                Log.i("inspectionIsWithinLastYear?", "" + inspection.getINSPECTION_DATE().isWithinLastYear());
+
                 for(Violation violation : inspection.getViolationList()) {
                     Log.i("description", violation.getDESCRIPTION());
                     Log.i("type", violation.getTYPE());
@@ -32,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         */
+
     }
 
     private void initializeModel() {

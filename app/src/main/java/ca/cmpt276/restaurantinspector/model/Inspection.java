@@ -16,7 +16,7 @@ import ca.cmpt276.restaurantinspector.BuildConfig;
  */
 public class Inspection {
     private final String TRACKING_NUMBER;   // restaurant tracking number
-    private final String INSPECTION_DATE;
+    private final InspectionDate INSPECTION_DATE;
     private final String INSPECT_TYPE;
 
     private final int NUM_CRITICAL;
@@ -30,7 +30,7 @@ public class Inspection {
                          int NUM_CRITICAL, int NUM_NONCRITICAL, String HAZARD_RATING,
                          String VIOLATION_LUMP) {
         this.TRACKING_NUMBER = TRACKING_NUMBER;
-        this.INSPECTION_DATE = INSPECTION_DATE;
+        this.INSPECTION_DATE = new InspectionDate(INSPECTION_DATE);
         this.INSPECT_TYPE = INSPECT_TYPE;
         this.NUM_CRITICAL = NUM_CRITICAL;
         this.NUM_NONCRITICAL = NUM_NONCRITICAL;
@@ -85,7 +85,7 @@ public class Inspection {
         return TRACKING_NUMBER;
     }
 
-    public String getINSPECTION_DATE() {
+    public InspectionDate getINSPECTION_DATE() {
         return INSPECTION_DATE;
     }
 
@@ -101,11 +101,21 @@ public class Inspection {
         return NUM_NONCRITICAL;
     }
 
+    public int getTotalIssues(){
+        return NUM_CRITICAL + NUM_NONCRITICAL;
+    }
+
     public String getHAZARD_RATING() {
         return HAZARD_RATING;
     }
 
-    public Iterable<Violation> getViolationList() {
-        return () -> Collections.unmodifiableCollection(violationList).iterator();
+    public Violation getViolation(int index) {
+        return violationList.get(index);
     }
+
+    public List<Violation> getViolationList() {
+        return Collections.unmodifiableList(violationList);
+    }
+
+
 }
