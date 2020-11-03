@@ -33,6 +33,22 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     List<Restaurant> restaurants;
     Context context;
 
+    private int LatestInspection(List<Inspection> list){
+        int max=Integer.parseInt(list.get(0).getINSPECTION_DATE());
+
+        for(int i=1;i<list.size();i++){
+            int temp=Integer.parseInt(list.get(i).getINSPECTION_DATE());
+            if(temp>max)
+                max=temp;
+        }
+        return max;
+    }
+
+    private void IntelligentInpectionDate(){
+        //List<Inspection> i= (List<Inspection>) restaurants.get(0).getInspectionList();
+        //int latestDate=LatestInspection(i);
+    }
+
     public RestaurantAdapter(List<Restaurant> restaurants,MainActivity activity) {
         this.restaurants = restaurants;
         this.context = activity;
@@ -50,11 +66,13 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Restaurant RestaurantList = restaurants.get(position);
+        //List<Inspection> inspections= (List<Inspection>) restaurants.get(position).getInspectionList();
         holder.textViewName.setText(RestaurantList.getNAME());
         if(RestaurantList==RestaurantData.getRestaurantByTrackingNumber(RestaurantList.getTRACKING_NUMBER())){
 
         }
         holder.trackingNumber.setText(RestaurantList.getTRACKING_NUMBER());
+        //holder.textViewDate.setText(LatestInspection(inspections));
         holder.RestaurantImage.setImageResource(R.drawable.a_and_w);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +82,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
                 Toast.makeText(context, RestaurantList.getADDRESS(), Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     @Override
@@ -86,11 +105,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             trackingNumber=itemView.findViewById(R.id.TrackingNumber);
 
         }
-    }
-    private void IntelligentInpectionDate(String InspectionDate){
-
-        Date currentTime = Calendar.getInstance().getTime();
-        Date.parse(InspectionDate);
     }
 
 }

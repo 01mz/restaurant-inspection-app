@@ -21,8 +21,8 @@ public class Restaurant {
     private final List<Inspection> inspectionList = new ArrayList<>();
 
     protected Restaurant(String TRACKING_NUMBER, String NAME,
-                      String ADDRESS, String CITY, String FAC_TYPE,
-                      double LATITUDE, double LONGITUDE) {
+                         String ADDRESS, String CITY, String FAC_TYPE,
+                         double LATITUDE, double LONGITUDE) {
         this.TRACKING_NUMBER = TRACKING_NUMBER;
         this.NAME = NAME;
         this.ADDRESS = ADDRESS;
