@@ -22,8 +22,8 @@ public class Restaurant {
     private final List<Inspection> inspectionList = new ArrayList<>();
 
     protected Restaurant(String TRACKING_NUMBER, String NAME,
-                         String ADDRESS, String CITY, String FAC_TYPE,
-                         double LATITUDE, double LONGITUDE) {
+                      String ADDRESS, String CITY, String FAC_TYPE,
+                      double LATITUDE, double LONGITUDE) {
         this.TRACKING_NUMBER = TRACKING_NUMBER;
         this.NAME = NAME;
         this.ADDRESS = ADDRESS;
@@ -79,12 +79,6 @@ public class Restaurant {
         // Compare the inspection dates in "reverse" so a more recent date is treated as "lesser"
         inspectionList.sort((i1, i2) -> i2.getINSPECTION_DATE().compareTo(i1.getINSPECTION_DATE()));
     }
-    
-    @Override
-    public String toString() {
-        return
-                TRACKING_NUMBER +
-                        "  " + getADDRESS() +" "+ getNAME()+" ";
-    }
-}
 
+
+}
