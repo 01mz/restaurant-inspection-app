@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Date;
@@ -18,6 +19,7 @@ import java.util.List;
 import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.model.Data;
 import ca.cmpt276.restaurantinspector.model.Inspection;
+import ca.cmpt276.restaurantinspector.model.InspectionDate;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
 import ca.cmpt276.restaurantinspector.ui.MainActivity;
 import ca.cmpt276.restaurantinspector.ui.RestaurantInfo;
@@ -33,25 +35,31 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     List<Restaurant> restaurants;
     Context context;
 
-    private int LatestInspection(List<Inspection> list){
-        int max=Integer.parseInt(list.get(0).getINSPECTION_DATE());
 
-        for(int i=1;i<list.size();i++){
-            int temp=Integer.parseInt(list.get(i).getINSPECTION_DATE());
-            if(temp>max)
-                max=temp;
+   /* private InspectionDate LatestInspection(int position) {
+        Inspection inspection = null;
+        InspectionDate id = null;
+        if (restaurants.get(position).hasInspection() == true) {
+            id = inspection.getINSPECTION_DATE();
         }
-        return max;
-    }
 
-    private void IntelligentInpectionDate(){
-        //List<Inspection> i= (List<Inspection>) restaurants.get(0).getInspectionList();
-        //int latestDate=LatestInspection(i);
-    }
+        return id;
+    }*/
+
+
 
     public RestaurantAdapter(List<Restaurant> restaurants,MainActivity activity) {
         this.restaurants = restaurants;
         this.context = activity;
+    }
+    private InspectionDate LatestInspection(int position) {
+        Inspection inspection = restaurants.get(position).getMostRecentInspection();
+        InspectionDate id = null;
+        if (restaurants.get(position).hasInspection() == true) {
+            id = inspection.getINSPECTION_DATE();
+        }
+
+        return id;
     }
 
     @NonNull
@@ -71,9 +79,29 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         if(RestaurantList==RestaurantData.getRestaurantByTrackingNumber(RestaurantList.getTRACKING_NUMBER())){
 
         }
-        holder.trackingNumber.setText(RestaurantList.getTRACKING_NUMBER());
-        //holder.textViewDate.setText(LatestInspection(inspections));
-        holder.RestaurantImage.setImageResource(R.drawable.a_and_w);
+
+        holder.trackingNumber.setText("# of Issues: 0");
+        holder.textViewDate.setText("No Inspection Performed Yet");
+        if(restaurants.get(position).hasInspection()) {
+            holder.textViewDate.setText("Inspected On: "+LatestInspection(position).toString());
+        }
+        holder.rating.setImageResource(R.drawable.no_inspection);
+        if(restaurants.get(position).hasInspection()==true) {
+            if (restaurants.get(position).getMostRecentInspection().getHAZARD_RATING().equals("Low")) {
+                holder.rating.setImageResource(R.drawable.hazardlow);
+            }
+            if (restaurants.get(position).getMostRecentInspection().getHAZARD_RATING().equals("Moderate")) {
+                holder.rating.setImageResource(R.drawable.hazardmoderate);
+            }
+            if(restaurants.get(position).getMostRecentInspection().getHAZARD_RATING().equals("High")) {
+                holder.rating.setImageResource(R.drawable.hazardhigh);
+            }
+            int total=restaurants.get(position).getMostRecentInspection().getTotalIssues();
+            String issues= Integer.toString(total);
+            holder.trackingNumber.setText("# of Issues: "+issues);
+            //Toast.makeText(context,issues,Toast.LENGTH_SHORT).show();
+        }
+        holder.RestaurantImage.setImageResource(R.drawable.generic);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,6 +112,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         });
 
     }
+
 
     @Override
     public int getItemCount() {
@@ -96,6 +125,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         TextView textViewName;
         TextView textViewDate;
         TextView trackingNumber;
+        ImageView rating;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -103,6 +133,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             textViewName = itemView.findViewById(R.id.RestaurantName);
             textViewDate = itemView.findViewById(R.id.InspectionDate);
             trackingNumber=itemView.findViewById(R.id.TrackingNumber);
+            rating= itemView.findViewById(R.id.rating);
 
         }
     }

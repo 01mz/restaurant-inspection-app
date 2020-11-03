@@ -26,9 +26,10 @@ public class Inspection {
 
     private final List<Violation> violationList = new ArrayList<>();
 
-    protected Inspection(String TRACKING_NUMBER, String INSPECTION_DATE, String INSPECT_TYPE,
-                         int NUM_CRITICAL, int NUM_NONCRITICAL, String HAZARD_RATING,
-                         String VIOLATION_LUMP) {
+
+    public Inspection(String TRACKING_NUMBER, String INSPECTION_DATE, String INSPECT_TYPE,
+                      int NUM_CRITICAL, int NUM_NONCRITICAL, String HAZARD_RATING,
+                      String VIOLATION_LUMP) {
         this.TRACKING_NUMBER = TRACKING_NUMBER;
         this.INSPECTION_DATE = new InspectionDate(INSPECTION_DATE);
         this.INSPECT_TYPE = INSPECT_TYPE;

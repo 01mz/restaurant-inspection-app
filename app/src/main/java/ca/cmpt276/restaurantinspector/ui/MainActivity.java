@@ -43,10 +43,10 @@ public class MainActivity extends AppCompatActivity {
         for (Restaurant r : data.getRestaurantList()) {
             list.add(r);
         }
-        RecyclerView recyclerView=findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager((this)));
-        RestaurantAdapter restaurantAdapter=new RestaurantAdapter(list,MainActivity.this);
+        RestaurantAdapter restaurantAdapter = new RestaurantAdapter(list, MainActivity.this);
         recyclerView.setAdapter(restaurantAdapter);
         //setUpList();
 
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         data.init(this);    // must init before use
     }
 
-    private void setUpList() {
+    /*private void setUpList() {
         RecyclerView recyclerView=findViewById(R.id.recyclerView);
         data=Data.getInstance();
         ArrayList<Restaurant> list = new ArrayList<>();
@@ -80,10 +80,10 @@ public class MainActivity extends AppCompatActivity {
        // l= (ListView) findViewById(R.id.RestaurantList);
         RestaurantAdapter restaurantAdapter=new RestaurantAdapter(list,MainActivity.this);
         /*ArrayAdapter<Restaurant> RestaurantArrayAdapter= new ArrayAdapter<>(this,R.layout.layout,list);*/
-        recyclerView.setAdapter(restaurantAdapter);
+    //recyclerView.setAdapter(restaurantAdapter);
         /*LensManager manager = LensManager.getInstance();
         ListView list = findViewById(RestaurantList);
         ArrayAdapter<Restaurant> lensArrayAdapter = new ArrayAdapter<>(this, R.layout.layout, manager.getList());
-        list.setAdapter(lensArrayAdapter);*/
-    }
+        list.setAdapter(lensArrayAdapter);
+    }*/
 }
