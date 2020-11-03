@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * Restaurant stores information about a restaurant including its list of inspections.
  * Has Getters for its info including getInspectionList() that returns an iterable of its Inspections
+ * The list of inspections can be empty (if there are no inspections associated with the restaurant).
  */
 public class Restaurant {
     private final String TRACKING_NUMBER;
@@ -32,8 +33,8 @@ public class Restaurant {
         this.LONGITUDE = LONGITUDE;
     }
 
-    public Iterable<Inspection> getInspectionList() {
-        return () -> Collections.unmodifiableCollection(inspectionList).iterator();
+    public List<Inspection> getInspectionList() {
+        return Collections.unmodifiableList(inspectionList);
     }
 
     public String getTRACKING_NUMBER() {
@@ -56,9 +57,29 @@ public class Restaurant {
         return LONGITUDE;
     }
 
+    public Inspection getInspection(int index){
+        return inspectionList.get(index);
+    }
+
+    public boolean hasInspection(){
+        return inspectionList.size() != 0;
+    }
+
+    // Make sure Restaurant has at least one Inspection: call hasInspection() before use
+    public Inspection getMostRecentInspection(){
+        return inspectionList.get(0);
+    }
+
     protected void addInspection(Inspection inspection){
         inspectionList.add(inspection);
     }
+
+    // Sorted by most recent date
+    protected void sortInspectionsByDate() {
+        // Compare the inspection dates in "reverse" so a more recent date is treated as "lesser"
+        inspectionList.sort((i1, i2) -> i2.getINSPECTION_DATE().compareTo(i1.getINSPECTION_DATE()));
+    }
+    
     @Override
     public String toString() {
         return
