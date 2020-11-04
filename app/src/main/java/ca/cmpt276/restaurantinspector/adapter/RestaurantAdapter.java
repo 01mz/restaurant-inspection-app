@@ -20,6 +20,8 @@ import ca.cmpt276.restaurantinspector.model.InspectionDate;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
 import ca.cmpt276.restaurantinspector.ui.RestaurantInfo;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.ViewHolder> {
 
     List<Restaurant> restaurantList;
@@ -81,6 +83,12 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             @Override
             public void onClick(View v) {
                 Intent i= RestaurantInfo.makeLaunch(context); /// Add the restaurants description Intent here.....
+                i.putExtra("position", position);
+                i.putExtra("name", restaurant.getNAME());
+                i.putExtra("address", restaurant.getADDRESS());
+                i.putExtra("latitude", restaurant.getLATITUDE());
+                i.putExtra("longitude", restaurant.getLONGITUDE());
+                startActivity(context,i,null);
 
                 Toast.makeText(context, restaurant.getADDRESS(), Toast.LENGTH_SHORT).show();
             }
