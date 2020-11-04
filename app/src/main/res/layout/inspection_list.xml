@@ -9,19 +9,29 @@
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginBottom="4dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/restaurant_logo"
         app:layout_constraintStart_toEndOf="@+id/hazard_level"
         app:layout_constraintTop_toBottomOf="@+id/RestaurantName">
 
         <TextView
-            android:id="@+id/sumNumIssues"
+            android:id="@+id/critIssues"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="0dp"
             android:baselineAligned="false"
-            android:text="@string/number_of_issues"
+            android:text="@string/num_crit_issues"
+            android:textColor="?android:attr/textColorPrimary" />
+
+        <TextView
+            android:id="@+id/nonCritIssues"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:baselineAligned="false"
+            android:text="@string/num_non_crit_issues"
             android:textColor="?android:attr/textColorPrimary" />
 
         <TextView
@@ -37,38 +47,14 @@
         android:id="@+id/hazard_level"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:layout_marginEnd="344dp"
         android:contentDescription="@string/hazard_level_image_desc"
         android:src="@drawable/neutral"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
-        app:layout_constraintStart_toStartOf="@+id/RestaurantName"
-        app:layout_constraintTop_toTopOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.555" />
-
-    <ImageView
-        android:id="@+id/restaurant_logo"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_margin="10dp"
-        android:contentDescription="@string/restaurant_logo_image_desc"
-        android:src="@drawable/a_and_w"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/RestaurantName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/restaurant_name"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/restaurant_logo"
-        app:layout_constraintTop_toTopOf="@+id/restaurant_logo" />
+        app:layout_constraintStart_toStartOf="@+id/RestaurantName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.571" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

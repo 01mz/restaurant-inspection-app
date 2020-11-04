@@ -1,6 +1,8 @@
 package ca.cmpt276.restaurantinspector.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +36,15 @@ public class RestaurantInfo extends AppCompatActivity {
             String gps = String.format("%s, %s", Double.toString(extras.getDouble("latitude")), Double.toString(extras.getDouble("longitude")));
             restaurantGPS.setText(gps);
         }
+
+        List<Restaurant> list = data.getRestaurantList();
+
+        RecyclerView recyclerView = findViewById(R.id.inspectionList);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager((this)));
+        RestaurantAdapter restaurantAdapter = new RestaurantAdapter(list, RestaurantInfo.this);
+        recyclerView.setAdapter(restaurantAdapter);
+
 
 
 

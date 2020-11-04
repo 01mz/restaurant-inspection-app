@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 import ca.cmpt276.restaurantinspector.R;
@@ -31,6 +33,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         this.restaurantList = restaurantList;
         this.context = context;
     }
+
 
     @NonNull
     @Override
@@ -59,6 +62,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             // set TextView intelligent inspection date
             String inspectionDateString = getIntelligentInspectionDate(recentInspection.getINSPECTION_DATE());
             holder.textViewDate.setText(inspectionDateString);
+
+            //set TextView # of critical issues
+            int numCritIssues = recentInspection.getNUM_CRITICAL();
+            if (numCritIssues!=0){
+            holder.textViewCritIssues.setText(context.getString(R.string.num_crit_issues, numCritIssues));}
+
+            //set TextView # of non-critical issues
+            int numNonCritIssues = recentInspection.getNUM_NONCRITICAL();
+            if (numNonCritIssues != 0){
+            holder.textViewNonCritIssues.setText(context.getString(R.string.num_non_crit_issues, numNonCritIssues));}
 
             // set hazard level icon
             switch (recentInspection.getHAZARD_RATING().toUpperCase()) {
@@ -126,6 +139,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         TextView textViewDate;
         TextView textViewNumTotalIssues;
         ImageView rating;
+        TextView textViewCritIssues;
+        TextView textViewNonCritIssues;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -134,6 +149,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             textViewDate = itemView.findViewById(R.id.InspectionDate);
             textViewNumTotalIssues =itemView.findViewById(R.id.sumNumIssues);
             rating= itemView.findViewById(R.id.hazard_level);
+            textViewCritIssues = itemView.findViewById(R.id.critIssues);
+            textViewNonCritIssues = itemView.findViewById(R.id.nonCritIssues);
 
         }
     }
