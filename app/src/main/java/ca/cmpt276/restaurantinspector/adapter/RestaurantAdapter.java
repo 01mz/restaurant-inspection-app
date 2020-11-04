@@ -10,48 +10,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.menu.MenuView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 import ca.cmpt276.restaurantinspector.R;
-import ca.cmpt276.restaurantinspector.model.Data;
 import ca.cmpt276.restaurantinspector.model.Inspection;
 import ca.cmpt276.restaurantinspector.model.InspectionDate;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
-import ca.cmpt276.restaurantinspector.ui.MainActivity;
 import ca.cmpt276.restaurantinspector.ui.RestaurantInfo;
-
-import static androidx.core.content.ContextCompat.startActivity;
-import static java.util.Date.parse;
-
-import java.util.Calendar;
 
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.ViewHolder> {
 
-    Data RestaurantData=Data.getInstance();
-    List<Restaurant> restaurants;
+    List<Restaurant> restaurantList;
     Context context;
 
-
-
-
-
-
-    public RestaurantAdapter(List<Restaurant> restaurants,MainActivity activity) {
-        this.restaurants = restaurants;
-        this.context = activity;
-    }
-    private InspectionDate LatestInspection(int position) {
-        Inspection inspection = restaurants.get(position).getMostRecentInspection();
-        InspectionDate id = null;
-        if (restaurants.get(position).hasInspection() == true) {
-            id = inspection.getINSPECTION_DATE();
-        }
-        return id;
+    public RestaurantAdapter(List<Restaurant> restaurantList, Context context) {
+        this.restaurantList = restaurantList;
+        this.context = context;
     }
 
     @NonNull
@@ -59,88 +35,97 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.restaurant_item_list,parent,false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        Restaurant RestaurantList = restaurants.get(position);
-        holder.textViewName.setText(RestaurantList.getNAME());
+        Restaurant restaurant = restaurantList.get(position);
 
-        holder.trackingNumber.setText("# of Issues: 0");
-        holder.textViewDate.setText("No Inspection Performed Yet");
+        // set restaurant ImageView and name TextView
+        holder.imageViewRestaurantLogo.setImageResource(R.drawable.generic);
+        holder.textViewName.setText(restaurant.getNAME());
 
+        if(restaurant.hasInspection()) {
+            Inspection recentInspection = restaurant.getMostRecentInspection();
 
-        if(RestaurantList.hasInspection()) {
-            LocalDate localDate = LocalDate.now();
-            int year = localDate.getYear();
+            // set TextView # of issues
+            int numTotalIssues = recentInspection.getTotalIssues();
+            holder.textViewNumTotalIssues.setText(context.getString(R.string.num_issues, numTotalIssues));
 
-            if (RestaurantList.getMostRecentInspection().getINSPECTION_DATE().isWithinThirtyDays()) { // within 30 days textview setter
+            // set TextView intelligent inspection date
+            String inspectionDateString = getIntelligentInspectionDate(recentInspection.getINSPECTION_DATE());
+            holder.textViewDate.setText(inspectionDateString);
 
-                int temp = RestaurantList.getMostRecentInspection().getINSPECTION_DATE().getDaysAgo();
-                String count = Integer.toString(temp);
-
-                holder.textViewDate.setText("Inspected On: " + LatestInspection(position).toString() + " " + count + " days ago");
+            // set hazard level icon
+            switch (recentInspection.getHAZARD_RATING().toUpperCase()) {
+                case "LOW":
+                    holder.rating.setImageResource(R.drawable.hazardlow);
+                    break;
+                case "MODERATE":
+                    holder.rating.setImageResource(R.drawable.hazardmoderate);
+                    break;
+                case "HIGH":
+                    holder.rating.setImageResource(R.drawable.hazardhigh);
+                    break;
             }
-            if (year == RestaurantList.getMostRecentInspection().getINSPECTION_DATE().getYear()) {
-                String str=RestaurantList.getMostRecentInspection().getINSPECTION_DATE().getMonth()+" "+RestaurantList.getMostRecentInspection().getINSPECTION_DATE().getDay();
-                holder.textViewDate.setText("Inspected On: " +str);
-            }
-            else{
-                holder.textViewDate.setText("Inspected On: "+RestaurantList.getMostRecentInspection().getINSPECTION_DATE().getMonth()+" "+RestaurantList.getMostRecentInspection().getINSPECTION_DATE().getYear());
-            }
+        } else {
+            // No recent inspections
+            holder.textViewDate.setText(R.string.no_inspections);
+            holder.rating.setImageResource(R.drawable.no_inspection);
         }
-        holder.rating.setImageResource(R.drawable.no_inspection);
-        if(restaurants.get(position).hasInspection()==true) {
-            if (restaurants.get(position).getMostRecentInspection().getHAZARD_RATING().equals("Low")) {
-                holder.rating.setImageResource(R.drawable.hazardlow);
-            }
-            if (restaurants.get(position).getMostRecentInspection().getHAZARD_RATING().equals("Moderate")) {
-                holder.rating.setImageResource(R.drawable.hazardmoderate);
-            }
-            if(restaurants.get(position).getMostRecentInspection().getHAZARD_RATING().equals("High")) {
-                holder.rating.setImageResource(R.drawable.hazardhigh);
-            }
-            int total=restaurants.get(position).getMostRecentInspection().getTotalIssues();
-            String issues= Integer.toString(total);
-            holder.trackingNumber.setText("# of Issues: "+issues);
 
-        }
-        holder.RestaurantImage.setImageResource(R.drawable.generic);
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i= RestaurantInfo.makeLaunch(context); /// Add the restaurants description Intent here.....
 
-                Toast.makeText(context, RestaurantList.getADDRESS(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, restaurant.getADDRESS(), Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
+    private String getIntelligentInspectionDate(InspectionDate inspectionDate) {
+        String inspectionDateString;
+        if (inspectionDate.isWithinThirtyDays()) { // within 30 days TextView setter
+            inspectionDateString = context.getString(R.string.inspected_days_ago,
+                    inspectionDate.getDaysAgo());
+        }
+        else if (inspectionDate.isWithinLastYear()) {
+            inspectionDateString = context.getString(R.string.inspection_on_month_day,
+                    inspectionDate.getMonth(), inspectionDate.getDay());
+        }
+        else {
+            inspectionDateString = context.getString(R.string.inspection_on_month_year,
+                    inspectionDate.getMonth(), inspectionDate.getYear());
+        }
+        return inspectionDateString;
+    }
+
 
     @Override
     public int getItemCount() {
-        return restaurants.size();
+        return restaurantList.size();
     }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        ImageView RestaurantImage;
+        ImageView imageViewRestaurantLogo;
         TextView textViewName;
         TextView textViewDate;
-        TextView trackingNumber;
+        TextView textViewNumTotalIssues;
         ImageView rating;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            RestaurantImage = itemView.findViewById(R.id.imageview);
+            imageViewRestaurantLogo = itemView.findViewById(R.id.restaurant_logo);
             textViewName = itemView.findViewById(R.id.RestaurantName);
             textViewDate = itemView.findViewById(R.id.InspectionDate);
-            trackingNumber=itemView.findViewById(R.id.TrackingNumber);
-            rating= itemView.findViewById(R.id.rating);
+            textViewNumTotalIssues =itemView.findViewById(R.id.sumNumIssues);
+            rating= itemView.findViewById(R.id.hazard_level);
 
         }
     }
