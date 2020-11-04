@@ -61,19 +61,19 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             // set hazard level icon
             switch (recentInspection.getHAZARD_RATING().toUpperCase()) {
                 case "LOW":
-                    holder.rating.setImageResource(R.drawable.hazardlow);
+                    holder.rating.setImageResource(R.drawable.hazard_low);
                     break;
                 case "MODERATE":
-                    holder.rating.setImageResource(R.drawable.hazardmoderate);
+                    holder.rating.setImageResource(R.drawable.hazard_moderate);
                     break;
                 case "HIGH":
-                    holder.rating.setImageResource(R.drawable.hazardhigh);
+                    holder.rating.setImageResource(R.drawable.hazard_high);
                     break;
             }
         } else {
             // No recent inspections
             holder.textViewDate.setText(R.string.no_inspections);
-            holder.rating.setImageResource(R.drawable.no_inspection);
+            holder.rating.setImageResource(R.drawable.hazard_no_inspection);
         }
 
 

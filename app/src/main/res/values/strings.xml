@@ -10,5 +10,6 @@
     <string name="inspection_on_month_day">Inspected on: %s %d</string>
     <string name="inspection_on_month_year">Inspected on: %s %d</string>
     <string name="num_issues"># of issues: %d</string>
+    <string name="restaurants">Restaurants</string>
 
 </resources>
