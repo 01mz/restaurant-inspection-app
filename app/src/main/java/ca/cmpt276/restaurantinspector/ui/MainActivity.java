@@ -1,19 +1,37 @@
 package ca.cmpt276.restaurantinspector.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 import ca.cmpt276.restaurantinspector.R;
+import ca.cmpt276.restaurantinspector.adapter.RestaurantAdapter;
 import ca.cmpt276.restaurantinspector.model.Data;
-import ca.cmpt276.restaurantinspector.model.Inspection;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
-import ca.cmpt276.restaurantinspector.model.Violation;
+
+import static ca.cmpt276.restaurantinspector.R.id.RestaurantList;
+import static ca.cmpt276.restaurantinspector.R.id.recyclerView;
 
 public class MainActivity extends AppCompatActivity {
-    Data data;  // model
+    Data data = Data.getInstance();  // model
+    RecyclerView recyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,19 +39,22 @@ public class MainActivity extends AppCompatActivity {
         initializeModel();
 
 
+        List<Restaurant> list = new ArrayList<>();
+        for (Restaurant r : data.getRestaurantList()) {
+            list.add(r);
+        }
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager((this)));
+        RestaurantAdapter restaurantAdapter = new RestaurantAdapter(list, MainActivity.this);
+        recyclerView.setAdapter(restaurantAdapter);
+
         /*
         // SOME SAMPLE MODEL/DATA USAGE
         for(Restaurant restaurant : data.getRestaurantList()) {
             Log.i("restaurantName", restaurant.getNAME());
-            Log.i("inspectionDateSeparate", restaurant.getNAME());
-            Toast.makeText(this, restaurant.getNAME(), Toast.LENGTH_SHORT).show();
             for(Inspection inspection : restaurant.getInspectionList()) {
-                Log.i("inspectionDate", inspection.getINSPECTION_DATE().toString());
-                Log.i("inspectionDate", inspection.getINSPECTION_DATE().getMonth());
-                Log.i("inspectionDateDaysAgo", "" + inspection.getINSPECTION_DATE().getDaysAgo());
-                Log.i("inspectionIsWithin30days?", "" + inspection.getINSPECTION_DATE().isWithinThirtyDays());
-                Log.i("inspectionIsWithinLastYear?", "" + inspection.getINSPECTION_DATE().isWithinLastYear());
-
+                Log.i("inspectionDate", inspection.getINSPECTION_DATE());
                 for(Violation violation : inspection.getViolationList()) {
                     Log.i("description", violation.getDESCRIPTION());
                     Log.i("type", violation.getTYPE());
@@ -41,11 +62,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         */
-
     }
 
     private void initializeModel() {
         data = Data.getInstance();
         data.init(this);    // must init before use
     }
+
+
 }

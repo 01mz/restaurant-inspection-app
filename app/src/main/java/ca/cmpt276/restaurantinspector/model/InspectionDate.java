@@ -18,6 +18,7 @@ public class InspectionDate {
     private final Month month;
     private final int day;
     private final LocalDate inspectionDate;
+    InspectionDate instance;
 
     protected InspectionDate(String date) {
         // date format: YYYYMMDD
@@ -68,7 +69,6 @@ public class InspectionDate {
                 Locale.getDefault()
         );
     }
-
     protected int compareTo(InspectionDate otherInspectionDate) {
         return this.inspectionDate.compareTo(otherInspectionDate.inspectionDate);
     }
