@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -36,15 +37,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     Context context;
 
 
-   /* private InspectionDate LatestInspection(int position) {
-        Inspection inspection = null;
-        InspectionDate id = null;
-        if (restaurants.get(position).hasInspection() == true) {
-            id = inspection.getINSPECTION_DATE();
-        }
 
-        return id;
-    }*/
 
 
 
@@ -58,7 +51,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         if (restaurants.get(position).hasInspection() == true) {
             id = inspection.getINSPECTION_DATE();
         }
-
         return id;
     }
 
@@ -73,17 +65,32 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Restaurant RestaurantList = restaurants.get(position);
-        //List<Inspection> inspections= (List<Inspection>) restaurants.get(position).getInspectionList();
-        holder.textViewName.setText(RestaurantList.getNAME());
-        if(RestaurantList==RestaurantData.getRestaurantByTrackingNumber(RestaurantList.getTRACKING_NUMBER())){
 
-        }
+        Restaurant RestaurantList = restaurants.get(position);
+        holder.textViewName.setText(RestaurantList.getNAME());
 
         holder.trackingNumber.setText("# of Issues: 0");
         holder.textViewDate.setText("No Inspection Performed Yet");
-        if(restaurants.get(position).hasInspection()) {
-            holder.textViewDate.setText("Inspected On: "+LatestInspection(position).toString());
+
+
+        if(RestaurantList.hasInspection()) {
+            LocalDate localDate = LocalDate.now();
+            int year = localDate.getYear();
+
+            if (RestaurantList.getMostRecentInspection().getINSPECTION_DATE().isWithinThirtyDays()) { // within 30 days textview setter
+
+                int temp = RestaurantList.getMostRecentInspection().getINSPECTION_DATE().getDaysAgo();
+                String count = Integer.toString(temp);
+
+                holder.textViewDate.setText("Inspected On: " + LatestInspection(position).toString() + " " + count + " days ago");
+            }
+            if (year == RestaurantList.getMostRecentInspection().getINSPECTION_DATE().getYear()) {
+                String str=RestaurantList.getMostRecentInspection().getINSPECTION_DATE().getMonth()+" "+RestaurantList.getMostRecentInspection().getINSPECTION_DATE().getDay();
+                holder.textViewDate.setText("Inspected On: " +str);
+            }
+            else{
+                holder.textViewDate.setText("Inspected On: "+RestaurantList.getMostRecentInspection().getINSPECTION_DATE().getMonth()+" "+RestaurantList.getMostRecentInspection().getINSPECTION_DATE().getYear());
+            }
         }
         holder.rating.setImageResource(R.drawable.no_inspection);
         if(restaurants.get(position).hasInspection()==true) {
@@ -99,7 +106,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             int total=restaurants.get(position).getMostRecentInspection().getTotalIssues();
             String issues= Integer.toString(total);
             holder.trackingNumber.setText("# of Issues: "+issues);
-            //Toast.makeText(context,issues,Toast.LENGTH_SHORT).show();
+
         }
         holder.RestaurantImage.setImageResource(R.drawable.generic);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -139,57 +146,3 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     }
 
 }
-/*public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.ViewHolder>{
-
-    ArrayList<Restaurant> myData;
-    Context context;
-    public RestaurantAdapter(ArrayList<Restaurant> myData, MainActivity activity){
-        this.myData=myData;
-        this.context=activity;
-    }
-
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater=LayoutInflater.from(parent.getContext());
-        View view=layoutInflater.inflate(R.layout.restaurant_item_list,parent,false);
-        ViewHolder viewHolder =new ViewHolder(view);
-
-        return viewHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final Restaurant myDataList=myData.get(position);
-        holder.RestaurantName.setText(myDataList.getNAME());
-        holder.TrackingNumber.setText(myDataList.getTRACKING_NUMBER());
-
-        holder.InspectionDate.setText(myDataList.getADDRESS());
-        holder.RestaurantImage.setImageResource(R.drawable.zugba);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(context,myDataList.getTRACKING_NUMBER(),Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    @Override
-    public int getItemCount() {
-        return myData.size();
-    }
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        ImageView RestaurantImage;
-        TextView  InspectionDate;
-        TextView  RestaurantName;
-        TextView  TrackingNumber;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            RestaurantImage=itemView.findViewById(R.id.imageview);
-            RestaurantName=itemView.findViewById(R.id.RestaurantName);
-            InspectionDate=itemView.findViewById(R.id.InspectionDate);
-            TrackingNumber=itemView.findViewById(R.id.TrackingNumber);
-        }
-    }
-}*/
