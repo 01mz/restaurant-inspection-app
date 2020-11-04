@@ -39,10 +39,8 @@ public class MainActivity extends AppCompatActivity {
         initializeModel();
 
 
-        List<Restaurant> list = new ArrayList<>();
-        for (Restaurant r : data.getRestaurantList()) {
-            list.add(r);
-        }
+        List<Restaurant> list = data.getRestaurantList();
+
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager((this)));

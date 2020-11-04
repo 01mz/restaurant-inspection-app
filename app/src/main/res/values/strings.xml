@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">Restaurant Inspector</string>
+    <string name="hazard_level_image_desc">hazard level</string>
+    <string name="restaurant_logo_image_desc">Restaurant Logo</string>
+    <string name="restaurant_name">Restaurant Name</string>
+    <string name="inspection_date">Inspection Date</string>
+    <string name="number_of_issues"># of issues: 0</string>
+    <string name="no_inspections">No Inspection Yet</string>
+    <string name="inspected_days_ago">Inspected %d days ago</string>
+    <string name="inspection_on_month_day">Inspected on: %s %d</string>
+    <string name="inspection_on_month_year">Inspected on: %s %d</string>
+    <string name="num_issues"># of issues: %d</string>
+    <string name="restaurants">Restaurants</string>
 
 </resources>
