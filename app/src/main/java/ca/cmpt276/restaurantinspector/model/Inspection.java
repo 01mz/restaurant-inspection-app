@@ -118,5 +118,7 @@ public class Inspection {
         return Collections.unmodifiableList(violationList);
     }
 
-
+    public boolean hasViolation() {
+        return violationList.size() != 0;
+    }
 }

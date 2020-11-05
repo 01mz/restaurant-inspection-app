@@ -65,9 +65,9 @@ public class ViolationAdapter extends RecyclerView.Adapter<ViolationAdapter.View
         }
 
         if(violation.isCRITICAL()){
-            holder.imageViewViolationSeverityIcon.setImageResource(R.drawable.hazard_high);
+            holder.imageViewViolationSeverityIcon.setImageResource(R.drawable.is_critical_icon);
         } else{
-            holder.imageViewViolationSeverityIcon.setImageResource(R.drawable.hazard_moderate);
+            holder.imageViewViolationSeverityIcon.setImageResource(R.drawable.is_not_critical_icon);
         }
 
 

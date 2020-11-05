@@ -38,7 +38,14 @@ public class RestaurantInfo extends AppCompatActivity {
             restaurantGPS.setText(gps);
         }
 
+
+
         int restaurantPosition = Objects.requireNonNull(extras).getInt("position");
+        if(!data.getRestaurant(restaurantPosition).hasInspection()){
+            TextView inspectionTitle = findViewById(R.id.textViewInspections);
+            inspectionTitle.setText(R.string.no_inspections_yet);
+        }
+
         List<Inspection> list = data.getRestaurant(restaurantPosition).getInspectionList();
 
         RecyclerView recyclerView = findViewById(R.id.inspectionList);

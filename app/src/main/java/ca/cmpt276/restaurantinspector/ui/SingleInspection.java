@@ -16,6 +16,7 @@ import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.adapter.ViolationAdapter;
 import ca.cmpt276.restaurantinspector.model.Data;
 import ca.cmpt276.restaurantinspector.model.Inspection;
+import ca.cmpt276.restaurantinspector.model.Restaurant;
 import ca.cmpt276.restaurantinspector.model.Violation;
 
 public class SingleInspection extends AppCompatActivity {
@@ -33,7 +34,11 @@ public class SingleInspection extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         int restaurantPosition = extras.getInt("restaurantPosition");
         int inspectionPosition = extras.getInt("inspectionPosition");
-        Inspection inspection  = data.getRestaurant(restaurantPosition).getInspection(inspectionPosition);
+        Restaurant restaurant = data.getRestaurant(restaurantPosition);
+        Inspection inspection  = restaurant.getInspection(inspectionPosition);
+
+        TextView inspectionTitle = findViewById(R.id.textViewInspectionTitle);
+        inspectionTitle.setText(getString(R.string.restaurant_inspection, restaurant.getNAME()));
 
         TextView numCritical = findViewById(R.id.textViewInspectionNumCrit);
         TextView numNonCritical = findViewById(R.id.textViewInspectionNumNonCrit);
@@ -63,6 +68,11 @@ public class SingleInspection extends AppCompatActivity {
             case "HIGH":
                 hazardIcon.setImageResource(R.drawable.hazard_high);
                 break;
+        }
+
+        if(!inspection.hasViolation()){
+            TextView violationTitle = findViewById(R.id.textViewViolationsTitle);
+            violationTitle.setText(R.string.no_violations);
         }
 
         List<Violation> violationList = inspection.getViolationList();
