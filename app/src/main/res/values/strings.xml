@@ -16,5 +16,16 @@
     <string name="address">Address</string>
     <string name="gps_coordinates">GPS coordinates</string>
     <string name="inspections">Inspections</string>
+    <string name="default_description">Plans/construction/alterations not in accordance with the Regulation [s. 3; s. 4]</string>
+    <string name="violation_severity">violation severity</string>
+    <string name="violation_type">violation type</string>
+    <string name="inspection_type">inspection type</string>
+    <string name="hazard_level">hazard level</string>
+    <string name="inspection">Inspection</string>
+    <string name="violations">Violations</string>
+    <string name="inspection_type_in_violation">%s inspection</string>
+    <string name="no_violations">No violations</string>
+    <string name="no_inspections_yet">No inspections yet.</string>
+    <string name="restaurant_inspection">%s inspection</string>
 
 </resources>

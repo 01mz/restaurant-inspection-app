@@ -11,14 +11,13 @@ import java.util.Locale;
 
 /**
  * InspectionDate stores info about date of an inspection.
- * Can
+ * Used for intelligent date format.
  */
 public class InspectionDate {
     private final int year;
     private final Month month;
     private final int day;
     private final LocalDate inspectionDate;
-    InspectionDate instance;
 
     protected InspectionDate(String date) {
         // date format: YYYYMMDD

@@ -9,10 +9,10 @@
         android:roundIcon="@drawable/app_icon_search"
         android:supportsRtl="true"
         android:theme="@style/Theme.RestaurantInspector">
-        <activity android:name=".ui.SingleInspection"></activity>
-        <activity android:name=".ui.RestaurantInfo" />
+        <activity android:name=".ui.ViolationListActivity" />
+        <activity android:name=".ui.InspectionListActivity" />
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.RestaurantListActivity"
             android:label="@string/restaurants">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,50 +1,55 @@
 package ca.cmpt276.restaurantinspector.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
+import java.util.Objects;
 
 import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.adapter.InspectionAdapter;
-import ca.cmpt276.restaurantinspector.adapter.RestaurantAdapter;
 import ca.cmpt276.restaurantinspector.model.Data;
 import ca.cmpt276.restaurantinspector.model.Inspection;
-import ca.cmpt276.restaurantinspector.model.Restaurant;
 
-public class RestaurantInfo extends AppCompatActivity {
+public class InspectionListActivity extends AppCompatActivity {
     Data data = Data.getInstance();
-    List<Restaurant> restaurants;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restaurant_info);
+        setContentView(R.layout.activity_inspection_list);
         initializeModel();
         Bundle extras = getIntent().getExtras();
-        TextView restaurantName = (TextView) findViewById(R.id.RestaurantName);
-        TextView restaurantAddress = (TextView) findViewById(R.id.restaurantAddress);
-        TextView restaurantGPS = (TextView) findViewById(R.id.restaurantGPS);
-        Inspection inspection;
+        TextView restaurantName = findViewById(R.id.RestaurantName);
+        TextView restaurantAddress = findViewById(R.id.restaurantAddress);
+        TextView restaurantGPS = findViewById(R.id.restaurantGPS);
         if(extras != null){
             restaurantName.setText(extras.getString("name"));
             restaurantAddress.setText(extras.getString("address"));
-            String gps = String.format("%s, %s", Double.toString(extras.getDouble("latitude")), Double.toString(extras.getDouble("longitude")));
+            String gps = String.format("%s, %s", extras.getDouble("latitude"), extras.getDouble("longitude"));
             restaurantGPS.setText(gps);
         }
 
-        List<Inspection> list = data.getRestaurant(extras.getInt("position")).getInspectionList();
+
+
+        int restaurantPosition = Objects.requireNonNull(extras).getInt("position");
+        if(!data.getRestaurant(restaurantPosition).hasInspection()){
+            TextView inspectionTitle = findViewById(R.id.textViewInspections);
+            inspectionTitle.setText(R.string.no_inspections_yet);
+        }
+
+        List<Inspection> list = data.getRestaurant(restaurantPosition).getInspectionList();
 
         RecyclerView recyclerView = findViewById(R.id.inspectionList);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager((this)));
-        InspectionAdapter inspectionAdapter = new InspectionAdapter(list, RestaurantInfo.this);
+        InspectionAdapter inspectionAdapter = new InspectionAdapter(list, InspectionListActivity.this, restaurantPosition);
         recyclerView.setAdapter(inspectionAdapter);
 
 
@@ -52,7 +57,7 @@ public class RestaurantInfo extends AppCompatActivity {
 
     }
     public static Intent makeLaunch(Context c){
-        return new Intent(c, ca.cmpt276.restaurantinspector.ui.RestaurantInfo.class);
+        return new Intent(c, InspectionListActivity.class);
     }
 
     private void initializeModel() {

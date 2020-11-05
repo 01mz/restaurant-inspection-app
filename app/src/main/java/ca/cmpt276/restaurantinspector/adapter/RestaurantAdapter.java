@@ -7,12 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -20,7 +17,7 @@ import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.model.Inspection;
 import ca.cmpt276.restaurantinspector.model.InspectionDate;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
-import ca.cmpt276.restaurantinspector.ui.RestaurantInfo;
+import ca.cmpt276.restaurantinspector.ui.InspectionListActivity;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
@@ -39,7 +36,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.restaurant_item_list,parent,false);
+        View view = layoutInflater.inflate(R.layout.restaurant_list_item,parent,false);
         return new ViewHolder(view);
     }
 
@@ -63,16 +60,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             String inspectionDateString = getIntelligentInspectionDate(recentInspection.getINSPECTION_DATE());
             holder.textViewDate.setText(inspectionDateString);
 
-            //set TextView # of critical issues
-//            int numCritIssues = recentInspection.getNUM_CRITICAL();
-//            if (this.context instanceof  RestaurantInfo){
-//                holder.textViewCritIssues.setText(Integer.toString(numCritIssues));}
-
-            //set TextView # of non-critical issues
-//            int numNonCritIssues = recentInspection.getNUM_NONCRITICAL();
-//            if (this.context instanceof RestaurantInfo){
-//            holder.textViewNonCritIssues.setText(context.getString(R.string.num_non_crit_issues, numNonCritIssues));}
-
             // set hazard level icon
             switch (recentInspection.getHAZARD_RATING().toUpperCase()) {
                 case "LOW":
@@ -92,19 +79,14 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         }
 
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i= RestaurantInfo.makeLaunch(context); /// Add the restaurants description Intent here.....
-                i.putExtra("position", position);
-                i.putExtra("name", restaurant.getNAME());
-                i.putExtra("address", restaurant.getADDRESS());
-                i.putExtra("latitude", restaurant.getLATITUDE());
-                i.putExtra("longitude", restaurant.getLONGITUDE());
-                startActivity(context,i,null);
-
-                Toast.makeText(context, restaurant.getADDRESS(), Toast.LENGTH_SHORT).show();
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Intent i= InspectionListActivity.makeLaunch(context);
+            i.putExtra("position", position);
+            i.putExtra("name", restaurant.getNAME());
+            i.putExtra("address", restaurant.getADDRESS());
+            i.putExtra("latitude", restaurant.getLATITUDE());
+            i.putExtra("longitude", restaurant.getLONGITUDE());
+            startActivity(context,i,null);
         });
 
     }
@@ -133,14 +115,12 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         ImageView imageViewRestaurantLogo;
         TextView textViewName;
         TextView textViewDate;
         TextView textViewNumTotalIssues;
         ImageView rating;
-//        TextView textViewCritIssues;
-//        TextView textViewNonCritIssues;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -149,9 +129,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             textViewDate = itemView.findViewById(R.id.InspectionDate);
             textViewNumTotalIssues =itemView.findViewById(R.id.sumNumIssues);
             rating= itemView.findViewById(R.id.hazard_level);
-//            textViewCritIssues = itemView.findViewById(R.id.critIssues);
-//            textViewNonCritIssues = itemView.findViewById(R.id.nonCritIssues);
-
         }
     }
 
