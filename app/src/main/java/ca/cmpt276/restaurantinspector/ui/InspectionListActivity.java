@@ -22,6 +22,10 @@ import ca.cmpt276.restaurantinspector.adapter.InspectionAdapter;
 import ca.cmpt276.restaurantinspector.model.Data;
 import ca.cmpt276.restaurantinspector.model.Inspection;
 
+/**
+ * InspectionListActivity displays the info for a single restaurant including a list of it's
+ * Inspections in a RecyclerView
+ */
 public class InspectionListActivity extends AppCompatActivity {
     Data data = Data.getInstance();
 

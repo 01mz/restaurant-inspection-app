@@ -15,6 +15,9 @@ import ca.cmpt276.restaurantinspector.adapter.RestaurantAdapter;
 import ca.cmpt276.restaurantinspector.model.Data;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
 
+/**
+ * RestaurantListActivity displays a list of all restaurants in a RecyclerView.
+ */
 public class RestaurantListActivity extends AppCompatActivity {
     Data data = Data.getInstance();  // model
 

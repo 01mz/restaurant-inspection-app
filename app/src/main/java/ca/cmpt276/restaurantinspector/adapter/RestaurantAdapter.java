@@ -21,6 +21,9 @@ import ca.cmpt276.restaurantinspector.ui.InspectionListActivity;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
+/**
+ * Adapter class for restaurant list RecyclerView. Populates the RecyclerView with restaurant_list_items.
+ */
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.ViewHolder> {
 
     List<Restaurant> restaurantList;

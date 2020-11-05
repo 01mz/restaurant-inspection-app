@@ -25,6 +25,10 @@ import ca.cmpt276.restaurantinspector.model.Inspection;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
 import ca.cmpt276.restaurantinspector.model.Violation;
 
+/**
+ * ViolationListActivity displays the info for a single inspection including a list of it's
+ * Violations in a RecyclerView
+ */
 public class ViolationListActivity extends AppCompatActivity {
     Data data = Data.getInstance();
 

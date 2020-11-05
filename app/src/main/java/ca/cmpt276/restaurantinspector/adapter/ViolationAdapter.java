@@ -16,7 +16,9 @@ import java.util.List;
 import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.model.Violation;
 
-
+/**
+ * Adapter class for violation list RecyclerView. Populates the RecyclerView with violation_list_items.
+ */
 public class ViolationAdapter extends RecyclerView.Adapter<ViolationAdapter.ViewHolder>{
     Context context;
     List<Violation> violationList;

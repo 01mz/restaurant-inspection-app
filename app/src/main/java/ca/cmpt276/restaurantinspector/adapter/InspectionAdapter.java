@@ -20,7 +20,9 @@ import ca.cmpt276.restaurantinspector.ui.ViolationListActivity;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
-
+/**
+ * Adapter class for inspection list RecyclerView. Populates the RecyclerView with inspection_list_items.
+ */
 public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.ViewHolder>{
     private final int restaurantPosition;
     Context context;
