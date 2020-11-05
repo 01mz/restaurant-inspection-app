@@ -16,16 +16,14 @@ import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.adapter.InspectionAdapter;
 import ca.cmpt276.restaurantinspector.model.Data;
 import ca.cmpt276.restaurantinspector.model.Inspection;
-import ca.cmpt276.restaurantinspector.model.Restaurant;
 
-public class RestaurantInfo extends AppCompatActivity {
+public class InspectionListActivity extends AppCompatActivity {
     Data data = Data.getInstance();
-    List<Restaurant> restaurants;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restaurant_info);
+        setContentView(R.layout.activity_inspection_list);
         initializeModel();
         Bundle extras = getIntent().getExtras();
         TextView restaurantName = findViewById(R.id.RestaurantName);
@@ -51,7 +49,7 @@ public class RestaurantInfo extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.inspectionList);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager((this)));
-        InspectionAdapter inspectionAdapter = new InspectionAdapter(list, RestaurantInfo.this, restaurantPosition);
+        InspectionAdapter inspectionAdapter = new InspectionAdapter(list, InspectionListActivity.this, restaurantPosition);
         recyclerView.setAdapter(inspectionAdapter);
 
 
@@ -59,7 +57,7 @@ public class RestaurantInfo extends AppCompatActivity {
 
     }
     public static Intent makeLaunch(Context c){
-        return new Intent(c, ca.cmpt276.restaurantinspector.ui.RestaurantInfo.class);
+        return new Intent(c, InspectionListActivity.class);
     }
 
     private void initializeModel() {

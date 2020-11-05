@@ -19,17 +19,17 @@ import ca.cmpt276.restaurantinspector.model.Inspection;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
 import ca.cmpt276.restaurantinspector.model.Violation;
 
-public class SingleInspection extends AppCompatActivity {
+public class ViolationListActivity extends AppCompatActivity {
     Data data = Data.getInstance();
 
     public static Intent makeLaunch(Context c) {
-        return new Intent(c, ca.cmpt276.restaurantinspector.ui.SingleInspection.class);
+        return new Intent(c, ViolationListActivity.class);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_single_inspection);
+        setContentView(R.layout.activity_violation_list);
 
         Bundle extras = getIntent().getExtras();
         int restaurantPosition = extras.getInt("restaurantPosition");

@@ -14,13 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ca.cmpt276.restaurantinspector.R;
-import ca.cmpt276.restaurantinspector.model.Restaurant;
 import ca.cmpt276.restaurantinspector.model.Violation;
 
 
 public class ViolationAdapter extends RecyclerView.Adapter<ViolationAdapter.ViewHolder>{
     Context context;
-    List<Restaurant> restaurantList;
     List<Violation> violationList;
 
 
@@ -39,16 +37,9 @@ public class ViolationAdapter extends RecyclerView.Adapter<ViolationAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-//        Restaurant restaurant = restaurantList.get(position);
-//        restaurant.getInspectionList();
-
         Violation violation = violationList.get(position);
 
-
-
         holder.textViewDescription.setText(violation.getDESCRIPTION());
-
 
         switch(violation.getTYPE().toUpperCase()){
             case "FOOD":
@@ -82,7 +73,7 @@ public class ViolationAdapter extends RecyclerView.Adapter<ViolationAdapter.View
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView textViewDescription;
         ImageView imageViewViolationTypeIcon;
         ImageView imageViewViolationSeverityIcon;

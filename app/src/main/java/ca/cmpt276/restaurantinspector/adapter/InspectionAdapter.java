@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,10 +16,7 @@ import java.util.List;
 import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.model.Inspection;
 import ca.cmpt276.restaurantinspector.model.InspectionDate;
-import ca.cmpt276.restaurantinspector.model.Restaurant;
-import ca.cmpt276.restaurantinspector.ui.RestaurantInfo;
-import ca.cmpt276.restaurantinspector.ui.SingleInspection;
-
+import ca.cmpt276.restaurantinspector.ui.ViolationListActivity;
 
 import static androidx.core.content.ContextCompat.startActivity;
 
@@ -28,7 +24,6 @@ import static androidx.core.content.ContextCompat.startActivity;
 public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.ViewHolder>{
     private final int restaurantPosition;
     Context context;
-    List<Restaurant> restaurantList;
     List<Inspection> inspectionList;
 
 
@@ -42,15 +37,12 @@ public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.Vi
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.inspection_list,parent,false);
+        View view = layoutInflater.inflate(R.layout.inspection_list_item,parent,false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-//        Restaurant restaurant = restaurantList.get(position);
-//        restaurant.getInspectionList();
 
         Inspection inspection = inspectionList.get(position);
 
@@ -83,7 +75,7 @@ public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.Vi
 
 
         holder.itemView.setOnClickListener(v -> {
-            Intent i= SingleInspection.makeLaunch(context);
+            Intent i= ViolationListActivity.makeLaunch(context);
             i.putExtra("criticalIssues",inspection.getNUM_CRITICAL());
             i.putExtra("nonCriticalIssues", inspection.getNUM_NONCRITICAL());
             String date1 = getIntelligentInspectionDate(inspection.getINSPECTION_DATE());
@@ -117,7 +109,7 @@ public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.Vi
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView textViewDate;
         ImageView rating;
         TextView textViewCritIssues;
