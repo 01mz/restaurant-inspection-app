@@ -19,6 +19,7 @@ import ca.cmpt276.restaurantinspector.model.Inspection;
 import ca.cmpt276.restaurantinspector.model.InspectionDate;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
 import ca.cmpt276.restaurantinspector.ui.RestaurantInfo;
+import ca.cmpt276.restaurantinspector.ui.SingleInspection;
 
 
 import static androidx.core.content.ContextCompat.startActivity;
@@ -83,10 +84,12 @@ public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.Vi
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent i= RestaurantInfo.makeLaunch(context);
-
-               // startActivity(context,i,null);
-                Toast.makeText(context, inspection.getNUM_CRITICAL(), Toast.LENGTH_SHORT).show();
+                Intent i= SingleInspection.makeLaunch(context);
+                i.putExtra("criticalIssues",inspection.getNUM_CRITICAL());
+                i.putExtra("nonCriticalIssues", inspection.getNUM_NONCRITICAL());
+                String date = getIntelligentInspectionDate(inspection.getINSPECTION_DATE());
+                i.putExtra("date",date);
+                startActivity(context,i,null);
             }
         });
     }
