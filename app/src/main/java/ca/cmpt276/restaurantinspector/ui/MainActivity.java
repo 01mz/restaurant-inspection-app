@@ -47,19 +47,7 @@ public class MainActivity extends AppCompatActivity {
         RestaurantAdapter restaurantAdapter = new RestaurantAdapter(list, MainActivity.this);
         recyclerView.setAdapter(restaurantAdapter);
 
-        /*
-        // SOME SAMPLE MODEL/DATA USAGE
-        for(Restaurant restaurant : data.getRestaurantList()) {
-            Log.i("restaurantName", restaurant.getNAME());
-            for(Inspection inspection : restaurant.getInspectionList()) {
-                Log.i("inspectionDate", inspection.getINSPECTION_DATE());
-                for(Violation violation : inspection.getViolationList()) {
-                    Log.i("description", violation.getDESCRIPTION());
-                    Log.i("type", violation.getTYPE());
-                }
-            }
-        }
-        */
+
     }
 
     private void initializeModel() {

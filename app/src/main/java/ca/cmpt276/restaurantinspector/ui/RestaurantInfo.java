@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import ca.cmpt276.restaurantinspector.R;
+import ca.cmpt276.restaurantinspector.adapter.InspectionAdapter;
 import ca.cmpt276.restaurantinspector.adapter.RestaurantAdapter;
 import ca.cmpt276.restaurantinspector.model.Data;
 import ca.cmpt276.restaurantinspector.model.Inspection;
@@ -25,6 +26,7 @@ public class RestaurantInfo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_info);
+        initializeModel();
         Bundle extras = getIntent().getExtras();
         TextView restaurantName = (TextView) findViewById(R.id.RestaurantName);
         TextView restaurantAddress = (TextView) findViewById(R.id.restaurantAddress);
@@ -37,13 +39,13 @@ public class RestaurantInfo extends AppCompatActivity {
             restaurantGPS.setText(gps);
         }
 
-        List<Restaurant> list = data.getRestaurantList();
+        List<Inspection> list = data.getRestaurant(extras.getInt("position")).getInspectionList();
 
         RecyclerView recyclerView = findViewById(R.id.inspectionList);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager((this)));
-        RestaurantAdapter restaurantAdapter = new RestaurantAdapter(list, RestaurantInfo.this);
-        recyclerView.setAdapter(restaurantAdapter);
+        InspectionAdapter inspectionAdapter = new InspectionAdapter(list, RestaurantInfo.this);
+        recyclerView.setAdapter(inspectionAdapter);
 
 
 
@@ -51,5 +53,10 @@ public class RestaurantInfo extends AppCompatActivity {
     }
     public static Intent makeLaunch(Context c){
         return new Intent(c, ca.cmpt276.restaurantinspector.ui.RestaurantInfo.class);
+    }
+
+    private void initializeModel() {
+        data = Data.getInstance();
+        data.init(this);    // must init before use
     }
 }
