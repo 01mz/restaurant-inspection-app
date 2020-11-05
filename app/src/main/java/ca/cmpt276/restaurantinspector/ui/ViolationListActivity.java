@@ -1,16 +1,22 @@
 package ca.cmpt276.restaurantinspector.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.Objects;
 
 import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.adapter.ViolationAdapter;
@@ -32,11 +38,21 @@ public class ViolationListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_violation_list);
 
         Bundle extras = getIntent().getExtras();
+
         int restaurantPosition = extras.getInt("restaurantPosition");
         int inspectionPosition = extras.getInt("inspectionPosition");
         Restaurant restaurant = data.getRestaurant(restaurantPosition);
         Inspection inspection  = restaurant.getInspection(inspectionPosition);
 
+        setupInspectionInfoTextViews(restaurant, inspection);
+        setupViolationsListRecyclerView(inspection);
+
+        // Enable "up" on toolbar
+        ActionBar ab = getSupportActionBar();
+        Objects.requireNonNull(ab).setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void setupInspectionInfoTextViews(Restaurant restaurant, Inspection inspection) {
         TextView inspectionTitle = findViewById(R.id.textViewInspectionTitle);
         inspectionTitle.setText(getString(R.string.restaurant_inspection, restaurant.getNAME()));
 
@@ -69,7 +85,9 @@ public class ViolationListActivity extends AppCompatActivity {
                 hazardIcon.setImageResource(R.drawable.hazard_high);
                 break;
         }
+    }
 
+    private void setupViolationsListRecyclerView(Inspection inspection) {
         if(!inspection.hasViolation()){
             TextView violationTitle = findViewById(R.id.textViewViolationsTitle);
             violationTitle.setText(R.string.no_violations);
@@ -83,5 +101,25 @@ public class ViolationListActivity extends AppCompatActivity {
         ViolationAdapter violationAdapter = new ViolationAdapter(violationList, this);
 
         recyclerView.setAdapter(violationAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate menu
+        //getMenuInflater().inflate(R.menu.menu_add_lens, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+
+            case android.R.id.home:
+                setResult(Activity.RESULT_CANCELED);
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

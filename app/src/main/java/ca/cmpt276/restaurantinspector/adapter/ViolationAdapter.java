@@ -61,9 +61,6 @@ public class ViolationAdapter extends RecyclerView.Adapter<ViolationAdapter.View
             holder.imageViewViolationSeverityIcon.setImageResource(R.drawable.is_not_critical_icon);
         }
 
-
-
-
         holder.itemView.setOnClickListener(v -> Toast.makeText(context, violation.getDESCRIPTION(), Toast.LENGTH_SHORT).show());
     }
 
