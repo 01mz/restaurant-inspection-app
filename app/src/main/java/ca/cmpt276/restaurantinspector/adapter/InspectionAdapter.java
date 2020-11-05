@@ -16,6 +16,7 @@ import java.util.List;
 
 import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.model.Inspection;
+import ca.cmpt276.restaurantinspector.model.InspectionDate;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
 import ca.cmpt276.restaurantinspector.ui.RestaurantInfo;
 
@@ -52,7 +53,9 @@ public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.Vi
         Inspection inspection = inspectionList.get(position);
 
 
-
+            //set TextView Date of Inspection
+            String date = getIntelligentInspectionDate(inspection.getINSPECTION_DATE());
+            holder.textViewDate.setText(date);
 
             //set TextView # of critical issues
             int numCritIssues = inspection.getNUM_CRITICAL();
@@ -86,6 +89,23 @@ public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.Vi
                 Toast.makeText(context, inspection.getNUM_CRITICAL(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private String getIntelligentInspectionDate(InspectionDate inspectionDate) {
+        String inspectionDateString;
+        if (inspectionDate.isWithinThirtyDays()) { // within 30 days TextView setter
+            inspectionDateString = context.getString(R.string.inspected_days_ago,
+                    inspectionDate.getDaysAgo());
+        }
+        else if (inspectionDate.isWithinLastYear()) {
+            inspectionDateString = context.getString(R.string.inspection_on_month_day,
+                    inspectionDate.getMonth(), inspectionDate.getDay());
+        }
+        else {
+            inspectionDateString = context.getString(R.string.inspection_on_month_year,
+                    inspectionDate.getMonth(), inspectionDate.getYear());
+        }
+        return inspectionDateString;
     }
 
     @Override
