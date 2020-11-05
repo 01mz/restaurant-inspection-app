@@ -56,7 +56,7 @@ public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.Vi
 
             //set TextView # of critical issues
             int numCritIssues = inspection.getNUM_CRITICAL();
-            holder.textViewCritIssues.setText(Integer.toString(numCritIssues));
+            holder.textViewCritIssues.setText(context.getString(R.string.num_crit_issues, numCritIssues));
 
             //set TextView # of non-critical issues
             int numNonCritIssues = inspection.getNUM_NONCRITICAL();
