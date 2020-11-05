@@ -13,5 +13,8 @@
     <string name="num_crit_issues"># of critical issues: %d</string>
     <string name="num_non_crit_issues"># of non-critical issues: %d</string>
     <string name="restaurants">Restaurants</string>
+    <string name="address">Address</string>
+    <string name="gps_coordinates">GPS coordinates</string>
+    <string name="inspections">Inspections</string>
 
 </resources>
