@@ -22,7 +22,7 @@
             android:layout_margin="0dp"
             android:baselineAligned="false"
             android:text="@string/number_of_issues"
-            android:textColor="?android:attr/textColorPrimary"/>
+            android:textColor="?android:attr/textColorPrimary" />
 
         <TextView
             android:id="@+id/InspectionDate"

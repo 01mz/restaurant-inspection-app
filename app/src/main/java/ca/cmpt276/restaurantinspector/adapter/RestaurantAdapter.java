@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 import ca.cmpt276.restaurantinspector.R;
@@ -19,6 +21,8 @@ import ca.cmpt276.restaurantinspector.model.Inspection;
 import ca.cmpt276.restaurantinspector.model.InspectionDate;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
 import ca.cmpt276.restaurantinspector.ui.RestaurantInfo;
+
+import static androidx.core.content.ContextCompat.startActivity;
 
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.ViewHolder> {
 
@@ -29,6 +33,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         this.restaurantList = restaurantList;
         this.context = context;
     }
+
 
     @NonNull
     @Override
@@ -58,6 +63,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             String inspectionDateString = getIntelligentInspectionDate(recentInspection.getINSPECTION_DATE());
             holder.textViewDate.setText(inspectionDateString);
 
+            //set TextView # of critical issues
+//            int numCritIssues = recentInspection.getNUM_CRITICAL();
+//            if (this.context instanceof  RestaurantInfo){
+//                holder.textViewCritIssues.setText(Integer.toString(numCritIssues));}
+
+            //set TextView # of non-critical issues
+//            int numNonCritIssues = recentInspection.getNUM_NONCRITICAL();
+//            if (this.context instanceof RestaurantInfo){
+//            holder.textViewNonCritIssues.setText(context.getString(R.string.num_non_crit_issues, numNonCritIssues));}
+
             // set hazard level icon
             switch (recentInspection.getHAZARD_RATING().toUpperCase()) {
                 case "LOW":
@@ -81,6 +96,12 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             @Override
             public void onClick(View v) {
                 Intent i= RestaurantInfo.makeLaunch(context); /// Add the restaurants description Intent here.....
+                i.putExtra("position", position);
+                i.putExtra("name", restaurant.getNAME());
+                i.putExtra("address", restaurant.getADDRESS());
+                i.putExtra("latitude", restaurant.getLATITUDE());
+                i.putExtra("longitude", restaurant.getLONGITUDE());
+                startActivity(context,i,null);
 
                 Toast.makeText(context, restaurant.getADDRESS(), Toast.LENGTH_SHORT).show();
             }
@@ -118,6 +139,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         TextView textViewDate;
         TextView textViewNumTotalIssues;
         ImageView rating;
+//        TextView textViewCritIssues;
+//        TextView textViewNonCritIssues;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -126,6 +149,8 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             textViewDate = itemView.findViewById(R.id.InspectionDate);
             textViewNumTotalIssues =itemView.findViewById(R.id.sumNumIssues);
             rating= itemView.findViewById(R.id.hazard_level);
+//            textViewCritIssues = itemView.findViewById(R.id.critIssues);
+//            textViewNonCritIssues = itemView.findViewById(R.id.nonCritIssues);
 
         }
     }
