@@ -12,8 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 import ca.cmpt276.restaurantinspector.R;
@@ -92,19 +90,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         }
 
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i= RestaurantInfo.makeLaunch(context); /// Add the restaurants description Intent here.....
-                i.putExtra("position", position);
-                i.putExtra("name", restaurant.getNAME());
-                i.putExtra("address", restaurant.getADDRESS());
-                i.putExtra("latitude", restaurant.getLATITUDE());
-                i.putExtra("longitude", restaurant.getLONGITUDE());
-                startActivity(context,i,null);
+        holder.itemView.setOnClickListener(v -> {
+            Intent i= RestaurantInfo.makeLaunch(context); /// Add the restaurants description Intent here.....
+            i.putExtra("position", position);
+            i.putExtra("name", restaurant.getNAME());
+            i.putExtra("address", restaurant.getADDRESS());
+            i.putExtra("latitude", restaurant.getLATITUDE());
+            i.putExtra("longitude", restaurant.getLONGITUDE());
+            startActivity(context,i,null);
 
-                Toast.makeText(context, restaurant.getADDRESS(), Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(context, restaurant.getADDRESS(), Toast.LENGTH_SHORT).show();
         });
 
     }

@@ -26,14 +26,16 @@ import static androidx.core.content.ContextCompat.startActivity;
 
 
 public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.ViewHolder>{
+    private final int restaurantPosition;
     Context context;
     List<Restaurant> restaurantList;
     List<Inspection> inspectionList;
 
 
-    public InspectionAdapter(List<Inspection> inspectionList, Context context) {
+    public InspectionAdapter(List<Inspection> inspectionList, Context context, int restaurantPosition) {
         this.inspectionList = inspectionList;
         this.context = context;
+        this.restaurantPosition = restaurantPosition;
     }
 
     @NonNull
@@ -41,8 +43,7 @@ public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.Vi
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.inspection_list,parent,false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -81,16 +82,15 @@ public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.Vi
 
 
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i= SingleInspection.makeLaunch(context);
-                i.putExtra("criticalIssues",inspection.getNUM_CRITICAL());
-                i.putExtra("nonCriticalIssues", inspection.getNUM_NONCRITICAL());
-                String date = getIntelligentInspectionDate(inspection.getINSPECTION_DATE());
-                i.putExtra("date",date);
-                startActivity(context,i,null);
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Intent i= SingleInspection.makeLaunch(context);
+            i.putExtra("criticalIssues",inspection.getNUM_CRITICAL());
+            i.putExtra("nonCriticalIssues", inspection.getNUM_NONCRITICAL());
+            String date1 = getIntelligentInspectionDate(inspection.getINSPECTION_DATE());
+            i.putExtra("date", date1);
+            i.putExtra("inspectionPosition", position);
+            i.putExtra("restaurantPosition", restaurantPosition);
+            startActivity(context,i,null);
         });
     }
 
