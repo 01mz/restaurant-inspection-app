@@ -27,5 +27,6 @@
     <string name="no_violations">No violations</string>
     <string name="no_inspections_yet">No inspections yet.</string>
     <string name="restaurant_inspection">%s inspection</string>
+    <string name="restaurant">Restaurant</string>
 
 </resources>

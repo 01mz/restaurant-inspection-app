@@ -43,43 +43,36 @@ public class InspectionAdapter extends RecyclerView.Adapter<InspectionAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         Inspection inspection = inspectionList.get(position);
 
+        //set TextView Date of Inspection
+        String date = getIntelligentInspectionDate(inspection.getINSPECTION_DATE());
+        holder.textViewDate.setText(date);
 
-            //set TextView Date of Inspection
-            String date = getIntelligentInspectionDate(inspection.getINSPECTION_DATE());
-            holder.textViewDate.setText(date);
+        //set TextView # of critical issues
+        int numCritIssues = inspection.getNUM_CRITICAL();
+        holder.textViewCritIssues.setText(context.getString(R.string.num_crit_issues, numCritIssues));
 
-            //set TextView # of critical issues
-            int numCritIssues = inspection.getNUM_CRITICAL();
-            holder.textViewCritIssues.setText(context.getString(R.string.num_crit_issues, numCritIssues));
+        //set TextView # of non-critical issues
+        int numNonCritIssues = inspection.getNUM_NONCRITICAL();
+        holder.textViewNonCritIssues.setText(context.getString(R.string.num_non_crit_issues, numNonCritIssues));
 
-            //set TextView # of non-critical issues
-            int numNonCritIssues = inspection.getNUM_NONCRITICAL();
-            holder.textViewNonCritIssues.setText(context.getString(R.string.num_non_crit_issues, numNonCritIssues));
-
-            // set hazard level icon
-            switch (inspection.getHAZARD_RATING().toUpperCase()) {
-                case "LOW":
-                    holder.rating.setImageResource(R.drawable.hazard_low);
-                    break;
-                case "MODERATE":
-                    holder.rating.setImageResource(R.drawable.hazard_moderate);
-                    break;
-                case "HIGH":
-                    holder.rating.setImageResource(R.drawable.hazard_high);
-                    break;
-            }
-
+        // set hazard level icon
+        switch (inspection.getHAZARD_RATING().toUpperCase()) {
+            case "LOW":
+                holder.rating.setImageResource(R.drawable.hazard_low);
+                break;
+            case "MODERATE":
+                holder.rating.setImageResource(R.drawable.hazard_moderate);
+                break;
+            case "HIGH":
+                holder.rating.setImageResource(R.drawable.hazard_high);
+                break;
+        }
 
 
         holder.itemView.setOnClickListener(v -> {
             Intent i= ViolationListActivity.makeLaunch(context);
-            i.putExtra("criticalIssues",inspection.getNUM_CRITICAL());
-            i.putExtra("nonCriticalIssues", inspection.getNUM_NONCRITICAL());
-            String date1 = getIntelligentInspectionDate(inspection.getINSPECTION_DATE());
-            i.putExtra("date", date1);
             i.putExtra("inspectionPosition", position);
             i.putExtra("restaurantPosition", restaurantPosition);
             startActivity(context,i,null);
