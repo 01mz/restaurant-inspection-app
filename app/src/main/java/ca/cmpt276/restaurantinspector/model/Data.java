@@ -110,8 +110,8 @@ public class Data {
                 final String INSPECT_TYPE = nextLine[2].trim();
                 final int NUM_CRITICAL = Integer.parseInt(nextLine[3].trim());
                 final int NUM_NONCRITICAL = Integer.parseInt(nextLine[4].trim());
-                final String HAZARD_RATING = nextLine[5].trim();
-                final String VIOLATION_LUMP = nextLine[6].trim();
+                final String VIOLATION_LUMP = nextLine[5].trim();
+                final String HAZARD_RATING = nextLine[6].trim();
 
                 Inspection inspection = new Inspection(TRACKING_NUMBER, INSPECTION_DATE,
                         INSPECT_TYPE, NUM_CRITICAL, NUM_NONCRITICAL, HAZARD_RATING, VIOLATION_LUMP);
