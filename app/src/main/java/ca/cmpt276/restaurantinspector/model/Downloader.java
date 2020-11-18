@@ -36,7 +36,7 @@ public class Downloader {
 
     private final Gson gson = new Gson();
     private final Context context;
-    private Object jsonGroup;
+
 
     protected Downloader(Context context){
         this.context = context;
@@ -73,7 +73,6 @@ public class Downloader {
         // Download JSON
         Ion.with(context)
             .load(RESTAURANTS_JSON_URL)
-            .group(jsonGroup)
             .asJsonObject()
             .setCallback((exception, result) -> {
                 // exception != null if download failed, if download success result is the JsonObject
@@ -103,7 +102,6 @@ public class Downloader {
         // Download a JSON file
         Ion.with(context)
             .load(INSPECTIONS_JSON_URL)
-            .group(jsonGroup)    
             .asJsonObject()
             .setCallback((exception, result) -> {
                 // exception != null if download failed, if download success result is the JsonObject

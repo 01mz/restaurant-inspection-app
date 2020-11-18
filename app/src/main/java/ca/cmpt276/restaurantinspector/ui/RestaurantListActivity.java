@@ -3,7 +3,6 @@ package ca.cmpt276.restaurantinspector.ui;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -17,8 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -53,10 +52,10 @@ public class RestaurantListActivity extends AppCompatActivity {
     private final Gson gson = new Gson();
 
     private boolean showed = false;
+    private DownloadingDialog downloadingDialog;
 
 
     Data data = Data.getInstance();  // model
-    ProgressBar progressBar;
 
 
     @Override
@@ -66,22 +65,12 @@ public class RestaurantListActivity extends AppCompatActivity {
         initializeModel();
 
         setupRestaurantListRecyclerView();
+        updateFiles();
+
 
         // Hide action bar
         ActionBar ab = getSupportActionBar();
         Objects.requireNonNull(ab).hide();
-
-        //progressBar = (ProgressBar) findViewById(R.id.indeterminateBar);
-
-        /*
-        // instantiate it within the onCreate method
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setMessage("A message");
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        mProgressDialog.setCancelable(true);
-        */
-
 
     }
 
@@ -99,12 +88,23 @@ public class RestaurantListActivity extends AppCompatActivity {
         recyclerView.setAdapter(restaurantAdapter);
     }
 
-    private void showWinDialog() {
+    private void showUpdateChoiceDialog() {
         FragmentManager manager = getSupportFragmentManager();
-        MessageFragment dialog = new MessageFragment();
+        UpdateChoiceDialog dialog = new UpdateChoiceDialog();
 
         dialog.setCancelable(false);
-        dialog.show(manager, "MessageDialog");
+        dialog.show(manager, "UpdateChoiceDialog");
+
+    }
+
+    private void showDownloadingDialog() {
+        FragmentManager manager = getSupportFragmentManager();
+
+        downloadingDialog = new DownloadingDialog();
+
+        downloadingDialog.setCancelable(false);
+        downloadingDialog.show(manager, "DownloadingDialog");
+
 
     }
 
@@ -120,15 +120,9 @@ public class RestaurantListActivity extends AppCompatActivity {
 
     private void initializeModel() {
         data = Data.getInstance();
-        updateFiles();
-//        if(data.isUpdateAvailable(this)) {
-//            if(true){
-//                data.update();
-//            }
-//        }
-
-
         data.init(this);    // must init before use
+
+
     }
 
     private void updateFiles() {
@@ -140,43 +134,35 @@ public class RestaurantListActivity extends AppCompatActivity {
             return;
         }
 
+        // check Internet
 
         // Download JSON
-        JsonObject rJson = null;
-        try {
-            rJson = Ion.with(this)
-                    .load(RESTAURANTS_JSON_URL)
-                    .asJsonObject().get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        Ion.with(this)
+                .load(RESTAURANTS_JSON_URL)
+                .asJsonObject().setCallback(new FutureCallback<JsonObject>() {
+            @Override
+            public void onCompleted(Exception e, JsonObject result) {
+                JsonArray resources = result.getAsJsonObject("result").get("resources").getAsJsonArray();
 
-        JsonArray resources = rJson.getAsJsonObject("result").get("resources").getAsJsonArray();
+                // We choose the element in resources with "format": "CSV" (happens to be at index 0)
+                JsonObject csvResources = resources.get(0).getAsJsonObject();
 
-        // We choose the element in resources with "format": "CSV" (happens to be at index 0)
-        JsonObject csvResources = resources.get(0).getAsJsonObject();
+                final String LAST_MODIFIED = csvResources.get("last_modified").getAsString();
+                RESTAURANTS_LAST_MODIFIED = parseDate(LAST_MODIFIED);
 
-        final String LAST_MODIFIED = csvResources.get("last_modified").getAsString();
-        RESTAURANTS_LAST_MODIFIED = parseDate(LAST_MODIFIED);
+                if(!showed){
+                    showUpdateChoiceDialog();
+                    showed = true;
+                }
 
-        if(!showed){
-            //showWinDialog();
-            Toast.makeText(RestaurantListActivity.this, "restaurants", Toast.LENGTH_SHORT).show();
-            showed = true;
-        }
+                RESTAURANTS_CSV_URL = csvResources.get("url").getAsString();
+            }
+        });
 
-        RESTAURANTS_CSV_URL = csvResources.get("url").getAsString();
 
-        File rCsvFile = null;
-        try {
-            rCsvFile = Ion.with(this)
 
-                    .load(RESTAURANTS_CSV_URL)
-                    .write(new File(RestaurantListActivity.this.getExternalFilesDir(null), RESTAURANTS_CSV_FILENAME))
-                    .get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+
+
 
 
 //        setCallback((Exception e, File csvFile) -> {
@@ -193,9 +179,7 @@ public class RestaurantListActivity extends AppCompatActivity {
 //                });
 
 
-        // update last modified
-        getPrefs(RestaurantListActivity.this).edit()
-                .putString(RESTAURANTS_CSV_FILENAME, gson.toJson(RESTAURANTS_LAST_MODIFIED)).apply();
+
 
 
 //                .setCallback((exception, result) -> {
@@ -252,44 +236,35 @@ public class RestaurantListActivity extends AppCompatActivity {
 //                });
 
         // Download a JSON file
-        JsonObject iJson = null;
-        try {
-            iJson = Ion.with(this)
+        Ion.with(this)
                     .load(INSPECTIONS_JSON_URL)
                     .asJsonObject()
-                    .get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+                    .setCallback(new FutureCallback<JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            // The JSON file has a JsonObject attribute "result". "result" has a JsonArray attribute "resources"
+                            JsonArray iresources = result.getAsJsonObject("result").get("resources").getAsJsonArray();
 
-        // The JSON file has a JsonObject attribute "result". "result" has a JsonArray attribute "resources"
-        JsonArray iresources = iJson.getAsJsonObject("result").get("resources").getAsJsonArray();
+                            // We choose the element in resources with "format": "CSV" (happens to be at index 0)
+                            JsonObject icsvResources = iresources.get(0).getAsJsonObject();
 
-        // We choose the element in resources with "format": "CSV" (happens to be at index 0)
-        JsonObject icsvResources = iresources.get(0).getAsJsonObject();
+                            final String iLAST_MODIFIED = icsvResources.get("last_modified").getAsString();
+                            INSPECTIONS_LAST_MODIFIED = parseDate(iLAST_MODIFIED);
 
-        final String iLAST_MODIFIED = icsvResources.get("last_modified").getAsString();
-        INSPECTIONS_LAST_MODIFIED = parseDate(iLAST_MODIFIED);
-
-        if(!showed){
-            //showWinDialog();
-            Toast.makeText(RestaurantListActivity.this, "inspections", Toast.LENGTH_SHORT).show();
-            showed = true;
-        }
+                            if(!showed){
+                                showUpdateChoiceDialog();
+                                showed = true;
+                            }
 
 
-        INSPECTIONS_CSV_URL = icsvResources.get("url").getAsString();
+                            INSPECTIONS_CSV_URL = icsvResources.get("url").getAsString();
+                        }
+                    });
 
-        File iCsvFile = null;
-        try {
-            iCsvFile = Ion.with(this)
 
-                   .load(INSPECTIONS_CSV_URL)
-                   .write(new File(RestaurantListActivity.this.getExternalFilesDir(null), INSPECTIONS_CSV_FILENAME))
-                   .get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+
+
+
 
 
 //                 .setCallback((Exception e, File csvFile) -> {
@@ -307,8 +282,7 @@ public class RestaurantListActivity extends AppCompatActivity {
 
 
 
-        getPrefs(RestaurantListActivity.this).edit()
-                .putString(INSPECTIONS_CSV_FILENAME, gson.toJson(INSPECTIONS_LAST_MODIFIED)).apply();
+
 
 
 
@@ -362,7 +336,7 @@ public class RestaurantListActivity extends AppCompatActivity {
 //                    }
 //                });
 
-        data.init(this);
+        //data.init(this);
     }
 
 
@@ -399,4 +373,73 @@ public class RestaurantListActivity extends AppCompatActivity {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
+
+    public void onUpdateDialogPressed(boolean update) {
+        if(update) {
+            final boolean[] other = {false};
+            showDownloadingDialog();
+            Ion.with(this)
+
+                        .load(RESTAURANTS_CSV_URL)
+                        .write(new File(RestaurantListActivity.this.getExternalFilesDir(null), RESTAURANTS_CSV_FILENAME))
+                        .setCallback(new FutureCallback<File>() {
+                            @Override
+                            public void onCompleted(Exception e, File result) {
+                                if(e != null){
+                                    Toast.makeText(RestaurantListActivity.this, "Download Error!", Toast.LENGTH_LONG).show();
+                                } else {
+                                    if (other[0]) {
+                                        downloadingDialog.dismiss();
+                                        data.init(RestaurantListActivity.this);
+                                        setupRestaurantListRecyclerView();
+
+                                        // update last modified
+                                        getPrefs(RestaurantListActivity.this).edit()
+                                                .putString(RESTAURANTS_CSV_FILENAME, gson.toJson(RESTAURANTS_LAST_MODIFIED)).apply();
+                                        getPrefs(RestaurantListActivity.this).edit()
+                                                .putString(INSPECTIONS_CSV_FILENAME, gson.toJson(INSPECTIONS_LAST_MODIFIED)).apply();
+                                    }
+                                    other[0] = true;
+                                }
+                            }
+                        });
+
+
+
+
+            Ion.with(this)
+                        .load(INSPECTIONS_CSV_URL)
+                        .write(new File(RestaurantListActivity.this.getExternalFilesDir(null), INSPECTIONS_CSV_FILENAME))
+                        .setCallback(new FutureCallback<File>() {
+                            @Override
+                            public void onCompleted(Exception e, File result) {
+                                if(e != null){
+                                    Toast.makeText(RestaurantListActivity.this, "Download Error!", Toast.LENGTH_LONG).show();
+                                } else{
+
+                                    if(other[0]){
+                                        downloadingDialog.dismiss();
+                                        data.init(RestaurantListActivity.this);
+                                        setupRestaurantListRecyclerView();
+
+                                        // update last modified
+                                        getPrefs(RestaurantListActivity.this).edit()
+                                                .putString(RESTAURANTS_CSV_FILENAME, gson.toJson(RESTAURANTS_LAST_MODIFIED)).apply();
+                                        getPrefs(RestaurantListActivity.this).edit()
+                                                .putString(INSPECTIONS_CSV_FILENAME, gson.toJson(INSPECTIONS_LAST_MODIFIED)).apply();
+                                    }
+                                    other[0] = true;
+                                }
+                            }
+                        });
+
+
+
+
+        }
+    }
+
+    public void onCancelDownloadDialogPressed() {
+        cancelDownloads();
+    }
 }
