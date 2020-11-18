@@ -14,8 +14,7 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import ca.cmpt276.restaurantinspector.R;
 
 /**
- * MessageFragment is the dialog that pops up after winning. After the dialog is clicked the user
- * returns to the Main Menu.
+ * MessageFragment is the dialog that pops up if update available
  * Code from Dr. Brian Fraser
  */
 public class MessageFragment extends AppCompatDialogFragment {
@@ -27,13 +26,26 @@ public class MessageFragment extends AppCompatDialogFragment {
                 .inflate(R.layout.win_message_layout, null);
 
         // Create a button Listener
-        DialogInterface.OnClickListener listener = (dialog, which) -> requireActivity().finish();
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch(which){
+                    case DialogInterface.BUTTON_POSITIVE:
+
+                        break;
+                    case DialogInterface.BUTTON_NEUTRAL:
+
+                        break;
+                }
+            }
+        };
 
         // Build the alert dialog
         return new AlertDialog.Builder(getActivity())
                 .setTitle("Congrats, you win!")
                 .setView(v)
-                .setPositiveButton(android.R.string.ok, listener)
+
+                .setNegativeButton(android.R.string.cancel, listener)
                 .create();
 
     }

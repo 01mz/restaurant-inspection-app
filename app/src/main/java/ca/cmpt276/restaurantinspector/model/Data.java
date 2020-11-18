@@ -1,7 +1,16 @@
 package ca.cmpt276.restaurantinspector.model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
+import android.widget.Toast;
+
+import androidx.preference.PreferenceManager;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.koushikdutta.ion.Ion;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -11,11 +20,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
+
+import ca.cmpt276.restaurantinspector.ui.RestaurantListActivity;
 
 /**
  * Data is a Singleton class with the restaurant data. Parses CSV and stores restaurants in a map.
@@ -26,6 +41,10 @@ public class Data {
     // Map where key = Tracking number, value = Restaurant associated with tracking number
     private final Map<String, Restaurant> restaurantMap = new HashMap<>();
     private List<Restaurant> sortedRestaurantList;
+
+
+
+
 
     // Singleton code
     private static Data instance = null;
@@ -152,4 +171,7 @@ public class Data {
             r.sortInspectionsByDate();
         }
     }
+
+
+
 }
