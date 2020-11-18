@@ -3,6 +3,7 @@ package ca.cmpt276.restaurantinspector.model;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
@@ -16,6 +17,8 @@ import com.opencsv.exceptions.CsvValidationException;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -51,7 +54,7 @@ public class Data {
 
     private Data(){ }
 
-    public static Data getInstance(){
+    public static synchronized Data getInstance(){
         if(instance == null){
             instance = new Data();
         }
@@ -73,6 +76,8 @@ public class Data {
 
     public void init(Context context) {
         /*
+        // Download method with no control
+        // https://stackoverflow.com/questions/3028306/download-a-file-with-android-and-showing-the-progress-in-a-progressdialog
         String url = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setDescription("Some descrition");
@@ -99,21 +104,38 @@ public class Data {
     }
 
     private void convertRestaurantCSV(Context context) {
-        final String RESTAURANTS_CSV_FILENAME = "restaurants_itr1.csv";
+
 
         InputStream is1 = null;
+        CSVReader csvReader = null;
         try {
-            is1 = context.getAssets().open ("data" + File.separatorChar + RESTAURANTS_CSV_FILENAME);
-        } catch (IOException ignored) {
+            // use downloaded file if it exists
+            final File restaurantsCsvFile = new File(context.getExternalFilesDir(null), "restaurants.csv");
 
+            if(restaurantsCsvFile.exists()){
+                is1 = new FileInputStream(restaurantsCsvFile);
+                csvReader = new CSVReader(new BufferedReader(new FileReader(restaurantsCsvFile)));
+            } else {
+                // use default files (from iteration 1)
+                final String RESTAURANTS_CSV_FILENAME = "restaurants_itr1.csv";
+                is1 = context.getAssets().open("data" + File.separatorChar + RESTAURANTS_CSV_FILENAME);
+                csvReader = new CSVReader(new BufferedReader(new InputStreamReader(is1, StandardCharsets.UTF_8)));
+            }
+        } catch (IOException ignored) {
+            Log.i("dataerror", "restaurants");
         }
+
+
         try {
-            CSVReader csvReader = new CSVReader(new BufferedReader(new InputStreamReader(is1, StandardCharsets.UTF_8)));
+            //CSVReader csvReader = new CSVReader(new BufferedReader(new InputStreamReader(is1, StandardCharsets.UTF_8)));
             String[] nextLine;
             csvReader.readNext();   // skip header line
             while ((nextLine = csvReader.readNext()) != null) {
-
+                Log.i("datainspection", nextLine[0]);
                 final String TRACKING_NUMBER = nextLine[0].trim();
+                if(TRACKING_NUMBER.equals("")){ // empty line in the csv
+                    continue;
+                }
                 final String NAME = nextLine[1].trim();
                 final String ADDRESS = nextLine[2].trim();
                 final String CITY = nextLine[3].trim();
@@ -128,21 +150,38 @@ public class Data {
     }
 
     private void convertInspectionCSV(Context context) {
-        final String INSPECTIONS_CSV_FILENAME = "inspectionreports_itr1.csv";
 
+
+        CSVReader csvReader = null;
         InputStream is2 = null;
         try {
-            is2 = context.getAssets().open ("data" + File.separatorChar + INSPECTIONS_CSV_FILENAME);
-        } catch (IOException ignored) {
+            // use downloaded file if it exists
+            final File inspectionsCsvFile = new File(context.getExternalFilesDir(null), "inspections.csv");
+            if(inspectionsCsvFile.exists()){
+                is2 = new FileInputStream(inspectionsCsvFile);
+                csvReader = new CSVReader(new BufferedReader(new FileReader(inspectionsCsvFile)));
+            } else {
+                // use default files (from iteration 1)
+                final String INSPECTIONS_CSV_FILENAME = "inspectionreports_itr1.csv";
+                is2 = context.getAssets().open ("data" + File.separatorChar + INSPECTIONS_CSV_FILENAME);
+                csvReader = new CSVReader(new BufferedReader(new InputStreamReader(is2, StandardCharsets.UTF_8)));
+            }
 
+        } catch (IOException ignored) {
+            Log.i("dataerror", "inspections");
         }
+
+
         try {
-            CSVReader csvReader = new CSVReader(new BufferedReader(new InputStreamReader(is2, StandardCharsets.UTF_8)));
+            //CSVReader csvReader = new CSVReader(new BufferedReader(new InputStreamReader(is2, StandardCharsets.UTF_8)));
             String[] nextLine;
             csvReader.readNext();   // skip header line
             while ((nextLine = csvReader.readNext()) != null) {
-
+                Log.i("datainspection", nextLine[0]);
                 final String TRACKING_NUMBER = nextLine[0].trim();
+                if(TRACKING_NUMBER.equals("")){ // empty line in the csv
+                    continue;
+                }
                 final String INSPECTION_DATE = nextLine[1].trim();
                 final String INSPECT_TYPE = nextLine[2].trim();
                 final int NUM_CRITICAL = Integer.parseInt(nextLine[3].trim());
@@ -154,7 +193,10 @@ public class Data {
                         INSPECT_TYPE, NUM_CRITICAL, NUM_NONCRITICAL, HAZARD_RATING, VIOLATION_LUMP);
 
                 // Add the inspection to the restaurant associated with the tracking number
-                restaurantMap.get(TRACKING_NUMBER).addInspection(inspection);
+                if(restaurantMap.containsKey(TRACKING_NUMBER)){
+
+                    restaurantMap.get(TRACKING_NUMBER).addInspection(inspection);
+                }
             }
         } catch (CsvValidationException | IOException ignored) {
         }

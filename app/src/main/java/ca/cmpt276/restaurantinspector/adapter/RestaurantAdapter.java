@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 
 import ca.cmpt276.restaurantinspector.R;
@@ -50,7 +52,9 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
         // set restaurant ImageView and name TextView
         holder.imageViewRestaurantLogo.setImageResource(R.drawable.generic);
-        holder.textViewName.setText(restaurant.getNAME());
+
+        // Trim long names to max length of 30
+        holder.textViewName.setText(StringUtils.abbreviate(restaurant.getNAME(), 30));
 
         if(restaurant.hasInspection()) {
             Inspection recentInspection = restaurant.getMostRecentInspection();

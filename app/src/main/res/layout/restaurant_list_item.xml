@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_height="wrap_content">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -11,7 +11,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/restaurant_logo"
         app:layout_constraintStart_toEndOf="@+id/hazard_level"
         app:layout_constraintTop_toBottomOf="@+id/RestaurantName">
 
@@ -46,8 +45,8 @@
 
     <ImageView
         android:id="@+id/restaurant_logo"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_margin="10dp"
         android:contentDescription="@string/restaurant_logo_image_desc"
         android:src="@drawable/a_and_w"
@@ -66,9 +65,9 @@
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.01"
         app:layout_constraintStart_toEndOf="@+id/restaurant_logo"
-        app:layout_constraintTop_toTopOf="@+id/restaurant_logo" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
