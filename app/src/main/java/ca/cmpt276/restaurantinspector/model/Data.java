@@ -45,10 +45,6 @@ public class Data {
     private final Map<String, Restaurant> restaurantMap = new HashMap<>();
     private List<Restaurant> sortedRestaurantList;
 
-
-
-
-
     // Singleton code
     private static Data instance = null;
 
@@ -75,25 +71,6 @@ public class Data {
     }
 
     public void init(Context context) {
-        /*
-        // Download method with no control
-        // https://stackoverflow.com/questions/3028306/download-a-file-with-android-and-showing-the-progress-in-a-progressdialog
-        String url = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        request.setDescription("Some descrition");
-        request.setTitle("Some title");
-// in order for this if to run, you must use the android 3.2 to compile your app
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            request.allowScanningByMediaScanner();
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        }
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "data.json");
-
-// get download service and enqueue file
-        DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        manager.enqueue(request);
-*/
-        
 
         // Parse CSV to restaurantMap
         convertRestaurantCSV(context);
@@ -105,20 +82,17 @@ public class Data {
 
     private void convertRestaurantCSV(Context context) {
 
-
-        InputStream is1 = null;
         CSVReader csvReader = null;
         try {
             // use downloaded file if it exists
             final File restaurantsCsvFile = new File(context.getExternalFilesDir(null), "restaurants.csv");
 
             if(restaurantsCsvFile.exists()){
-                is1 = new FileInputStream(restaurantsCsvFile);
                 csvReader = new CSVReader(new BufferedReader(new FileReader(restaurantsCsvFile)));
             } else {
                 // use default files (from iteration 1)
                 final String RESTAURANTS_CSV_FILENAME = "restaurants_itr1.csv";
-                is1 = context.getAssets().open("data" + File.separatorChar + RESTAURANTS_CSV_FILENAME);
+                InputStream is1 = context.getAssets().open("data" + File.separatorChar + RESTAURANTS_CSV_FILENAME);
                 csvReader = new CSVReader(new BufferedReader(new InputStreamReader(is1, StandardCharsets.UTF_8)));
             }
         } catch (IOException ignored) {
@@ -153,17 +127,16 @@ public class Data {
 
 
         CSVReader csvReader = null;
-        InputStream is2 = null;
+
         try {
             // use downloaded file if it exists
             final File inspectionsCsvFile = new File(context.getExternalFilesDir(null), "inspections.csv");
             if(inspectionsCsvFile.exists()){
-                is2 = new FileInputStream(inspectionsCsvFile);
                 csvReader = new CSVReader(new BufferedReader(new FileReader(inspectionsCsvFile)));
             } else {
                 // use default files (from iteration 1)
                 final String INSPECTIONS_CSV_FILENAME = "inspectionreports_itr1.csv";
-                is2 = context.getAssets().open ("data" + File.separatorChar + INSPECTIONS_CSV_FILENAME);
+                InputStream is2 = context.getAssets().open ("data" + File.separatorChar + INSPECTIONS_CSV_FILENAME);
                 csvReader = new CSVReader(new BufferedReader(new InputStreamReader(is2, StandardCharsets.UTF_8)));
             }
 
@@ -173,7 +146,6 @@ public class Data {
 
 
         try {
-            //CSVReader csvReader = new CSVReader(new BufferedReader(new InputStreamReader(is2, StandardCharsets.UTF_8)));
             String[] nextLine;
             csvReader.readNext();   // skip header line
             while ((nextLine = csvReader.readNext()) != null) {

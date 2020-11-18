@@ -36,7 +36,6 @@ public class DownloadingDialog extends AppCompatDialogFragment {
 
         // Build the alert dialog
         return new AlertDialog.Builder(getActivity())
-                .setTitle("Downloading...")
                 .setView(v)
                 .setNegativeButton(android.R.string.no, listener)
                 .create();
