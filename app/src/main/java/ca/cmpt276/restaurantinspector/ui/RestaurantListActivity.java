@@ -1,8 +1,11 @@
 package ca.cmpt276.restaurantinspector.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -53,6 +56,10 @@ public class RestaurantListActivity extends AppCompatActivity {
 
     Data data = Data.getInstance();  // model
 
+    public static Intent makeLaunch(Context context) {
+        return new Intent(context, RestaurantListActivity.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +72,16 @@ public class RestaurantListActivity extends AppCompatActivity {
         // Hide action bar
         ActionBar ab = getSupportActionBar();
         Objects.requireNonNull(ab).hide();
+
+        Button buttonSeeMap = (Button) findViewById(R.id.buttonSeeMap);
+        buttonSeeMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = MapsActivity.makeLaunch(RestaurantListActivity.this);
+                startActivity(i);
+                finish();
+            }
+        });
     }
 
     private void setupRestaurantListRecyclerView() {

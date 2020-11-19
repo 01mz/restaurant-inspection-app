@@ -37,5 +37,8 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="downloading">Downloading…</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="see_list">See list</string>
+    <string name="see_map">See Map</string>
 
 </resources>
