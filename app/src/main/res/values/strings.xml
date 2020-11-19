@@ -28,5 +28,14 @@
     <string name="no_inspections_yet">No inspections yet.</string>
     <string name="restaurant_inspection">%s inspection</string>
     <string name="restaurant">Restaurant</string>
+    <string name="star">star</string>
+    <string name="checking_for_updates">Checking for updates…</string>
+    <string name="unable_to_check_for_updates">Unable to for check updates. Check your connection.</string>
+    <string name="unable_to_update">Unable to update data or update was canceled.</string>
+    <string name="update_available">Update available.</string>
+    <string name="update_question">Would you like to update?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="downloading">Downloading…</string>
 
 </resources>
