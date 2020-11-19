@@ -21,6 +21,7 @@ import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.adapter.InspectionAdapter;
 import ca.cmpt276.restaurantinspector.model.Data;
 import ca.cmpt276.restaurantinspector.model.Inspection;
+import ca.cmpt276.restaurantinspector.model.Restaurant;
 
 /**
  * InspectionListActivity displays the info for a single restaurant including a list of it's
@@ -35,9 +36,9 @@ public class InspectionListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inspection_list);
 
         Bundle extras = getIntent().getExtras();
-        setupRestaurantInfoTextViews(extras);
 
         int restaurantPosition = Objects.requireNonNull(extras).getInt("position");
+        setupRestaurantInfoTextViews(restaurantPosition);
         setupInspectionsListRecyclerView(restaurantPosition);
 
         // Enable "up" on toolbar
@@ -45,13 +46,15 @@ public class InspectionListActivity extends AppCompatActivity {
         Objects.requireNonNull(ab).setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setupRestaurantInfoTextViews(Bundle extras) {
+    private void setupRestaurantInfoTextViews(int position) {
         TextView restaurantName = findViewById(R.id.RestaurantName);
         TextView restaurantAddress = findViewById(R.id.restaurantAddress);
         TextView restaurantGPS = findViewById(R.id.restaurantGPS);
-        restaurantName.setText(extras.getString("name"));
-        restaurantAddress.setText(extras.getString("address"));
-        String gps = String.format("%s, %s", extras.getDouble("latitude"), extras.getDouble("longitude"));
+
+        Restaurant restaurant = data.getRestaurant(position);
+        restaurantName.setText(restaurant.getNAME());
+        restaurantAddress.setText(restaurant.getADDRESS());
+        String gps = String.format("%s, %s", restaurant.getLATITUDE(), restaurant.getLONGITUDE());
         restaurantGPS.setText(gps);
     }
 
