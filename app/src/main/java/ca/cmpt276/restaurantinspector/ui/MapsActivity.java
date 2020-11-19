@@ -121,28 +121,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
 
-        for (int i = 0; i < data.getRestaurantList().size(); i++) {
-            setMarkerColor(data.getRestaurant(i), i);
+        new Thread(new Runnable() {
 
-        }
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                Intent intent = new Intent(MapsActivity.this, InspectionListActivity.class);
-                String Tag = marker.getId();
+            public void run(){
 
-                intent.putExtra("string", Tag);
-                startActivity(intent);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int i = 0; i < data.getRestaurantList().size(); i++) {
+                            setMarkerColor(data.getRestaurant(i), i);
+
+                        }
+                        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                            @Override
+                            public void onInfoWindowClick(Marker marker) {
+                                Intent intent = new Intent(MapsActivity.this, InspectionListActivity.class);
+                                String Tag = marker.getId();
+
+                                intent.putExtra("string", Tag);
+                                startActivity(intent);
+                            }
+                        });
+
+                        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+                            @Override
+                            public boolean onMarkerClick(Marker marker) {
+                                return false;
+                            }
+                        });
+                    }
+                });
+
             }
-        });
+        }).start();
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                return false;
-            }
-        });
 
     }
 
