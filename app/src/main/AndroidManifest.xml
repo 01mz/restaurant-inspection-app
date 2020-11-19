@@ -9,24 +9,18 @@
         android:roundIcon="@drawable/app_icon_search"
         android:supportsRtl="true"
         android:theme="@style/Theme.RestaurantInspector">
-        <activity android:name=".ui.UpdateActivity"></activity>
-        <activity
-            android:name=".ui.ViolationListActivity"
-            android:configChanges="keyboard|orientation|keyboardHidden|screenSize"
-            android:label="@string/inspection"
+        <activity android:name=".ui.ViolationListActivity"
             android:parentActivityName=".ui.InspectionListActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.InspectionListActivity"
-            android:configChanges="keyboard|orientation|keyboardHidden|screenSize"
-            android:label="@string/restaurant"
+            android:label="@string/inspection"
+            android:configChanges="keyboard|orientation|keyboardHidden|screenSize" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.InspectionListActivity"
             android:parentActivityName=".ui.RestaurantListActivity"
-            android:screenOrientation="portrait" />
+            android:label="@string/restaurant"
+            android:configChanges="keyboard|orientation|keyboardHidden|screenSize" android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.RestaurantListActivity"
-            android:configChanges="keyboard|orientation|keyboardHidden|screenSize"
             android:label="@string/restaurants"
-            android:screenOrientation="portrait">
+            android:configChanges="keyboard|orientation|keyboardHidden|screenSize" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

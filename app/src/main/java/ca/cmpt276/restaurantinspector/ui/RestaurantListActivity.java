@@ -32,7 +32,6 @@ public class RestaurantListActivity extends AppCompatActivity {
         // Hide action bar
         ActionBar ab = getSupportActionBar();
         Objects.requireNonNull(ab).hide();
-
     }
 
     private void setupRestaurantListRecyclerView() {

@@ -48,43 +48,11 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
         Restaurant restaurant = restaurantList.get(position);
 
-        if (restaurant.getNAME().contains("A&W")) {
-            holder.imageViewRestaurantLogo.setImageResource(R.drawable.a_and_w);
-            holder.textViewName.setText(restaurant.getNAME());
-        } else if (restaurant.getNAME().contains("Tim Hortons")) {
-            holder.imageViewRestaurantLogo.setImageResource(R.drawable.tim_hortons);
-            holder.textViewName.setText(restaurant.getNAME());
-        } else if (restaurant.getNAME().contains("Starbucks")) {
-            holder.imageViewRestaurantLogo.setImageResource(R.drawable.starbucks);
-            holder.textViewName.setText(restaurant.getNAME());
-        } else if (restaurant.getNAME().contains("7-Eleven")) {
-            holder.imageViewRestaurantLogo.setImageResource(R.drawable.seven_eleven);
-            holder.textViewName.setText(restaurant.getNAME());
-        } else if (restaurant.getNAME().contains("Boston Pizza")) {
-            holder.imageViewRestaurantLogo.setImageResource(R.drawable.boston_pizza);
-            holder.textViewName.setText(restaurant.getNAME());
-        } else if (restaurant.getNAME().contains("Dairy Queen")) {
-            holder.imageViewRestaurantLogo.setImageResource(R.drawable.dairy_queen);
-            holder.textViewName.setText(restaurant.getNAME());
-        } else if (restaurant.getNAME().contains("T&T")) {
-            holder.imageViewRestaurantLogo.setImageResource(R.drawable.tandt);
-            holder.textViewName.setText(restaurant.getNAME());
-        } else if (restaurant.getNAME().contains("Jugo Juice")) {
-            holder.imageViewRestaurantLogo.setImageResource(R.drawable.jugo_juice);
-            holder.textViewName.setText(restaurant.getNAME());
-        } else if (restaurant.getNAME().contains("Domino")) {
-            holder.imageViewRestaurantLogo.setImageResource(R.drawable.domino);
-            holder.textViewName.setText(restaurant.getNAME());
-        } else if (restaurant.getNAME().contains("White Spot")) {
-            holder.imageViewRestaurantLogo.setImageResource(R.drawable.white_spot);
-            holder.textViewName.setText(restaurant.getNAME());
-        } else {
-            // set restaurant ImageView and name TextView
-            holder.imageViewRestaurantLogo.setImageResource(R.drawable.generic);
-            holder.textViewName.setText(restaurant.getNAME());
-        }
+        // set restaurant ImageView and name TextView
+        holder.imageViewRestaurantLogo.setImageResource(R.drawable.generic);
+        holder.textViewName.setText(restaurant.getNAME());
 
-        if (restaurant.hasInspection()) {
+        if(restaurant.hasInspection()) {
             Inspection recentInspection = restaurant.getMostRecentInspection();
 
             // set TextView # of issues
