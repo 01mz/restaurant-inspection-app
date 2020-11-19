@@ -49,9 +49,34 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         Restaurant restaurant = restaurantList.get(position);
+        if(restaurant.getNAME().contains("A & W")){
+            holder.imageViewRestaurantLogo.setImageResource(R.drawable.a_and_w);
+        }else if (restaurant.getNAME().contains("A&W")){
+            holder.imageViewRestaurantLogo.setImageResource(R.drawable.a_and_w);
+        } else if (restaurant.getNAME().contains("Blenz")){
+            holder.imageViewRestaurantLogo.setImageResource(R.drawable.blenz);
+        } else if (restaurant.getNAME().contains("Boston")){
+            holder.imageViewRestaurantLogo.setImageResource(R.drawable.boston);
+        } else if (restaurant.getNAME().contains("Eleven")){
+            holder.imageViewRestaurantLogo.setImageResource(R.drawable.seven_eleven);
+        } else if (restaurant.getNAME().contains("Panago")){
+            holder.imageViewRestaurantLogo.setImageResource(R.drawable.panago);
+        } else if (restaurant.getNAME().contains("McDonald")){
+            holder.imageViewRestaurantLogo.setImageResource(R.drawable.mcdonalds);
+        } else if (restaurant.getNAME().contains("Lee Yuen")){
+            holder.imageViewRestaurantLogo.setImageResource(R.drawable.seafood);
+        } else if (restaurant.getNAME().contains("Subway")){
+            holder.imageViewRestaurantLogo.setImageResource(R.drawable.subway);
+        } else if (restaurant.getNAME().contains("Tim Hortons")){
+            holder.imageViewRestaurantLogo.setImageResource(R.drawable.timhortons);
+        }else if (restaurant.getNAME().contains("Starbucks")){
+            holder.imageViewRestaurantLogo.setImageResource(R.drawable.starbucks);
+        }else{
+            // set restaurant ImageView and name TextView
+            holder.imageViewRestaurantLogo.setImageResource(R.drawable.generic);
 
-        // set restaurant ImageView and name TextView
-        holder.imageViewRestaurantLogo.setImageResource(R.drawable.generic);
+        }
+
 
         // Trim long names to max length of 30
         holder.textViewName.setText(StringUtils.abbreviate(restaurant.getNAME(), 30));
