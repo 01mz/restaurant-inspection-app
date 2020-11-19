@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import ca.cmpt276.restaurantinspector.R;
 
 /**
- * DownloadingDialog is the dialog that pops up during download
+ * DownloadingDialog is the dialog that pops up during download with a cancel button to stop the download.
  * Code from Dr. Brian Fraser
  */
 public class DownloadingDialog extends AppCompatDialogFragment {
@@ -26,18 +26,15 @@ public class DownloadingDialog extends AppCompatDialogFragment {
                 .inflate(R.layout.downloading_dialog_layout, null);
 
         // Create a button Listener
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // cancel
-                ((RestaurantListActivity)(DownloadingDialog.this.getActivity())).onCancelDownloadDialogPressed();
-            }
+        DialogInterface.OnClickListener listener = (dialog, which) -> {
+            // cancel
+            ((RestaurantListActivity)(DownloadingDialog.this.getActivity())).onCancelDownloadDialogPressed();
         };
 
         // Build the alert dialog
         return new AlertDialog.Builder(getActivity())
                 .setView(v)
-                .setNegativeButton(android.R.string.no, listener)
+                .setNegativeButton(android.R.string.no, listener)   // cancel
                 .create();
 
     }
