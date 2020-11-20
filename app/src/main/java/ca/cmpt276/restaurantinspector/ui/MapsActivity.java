@@ -30,6 +30,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import ca.cmpt276.restaurantinspector.R;
@@ -42,6 +44,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     FusedLocationProviderClient fusedLocationProviderClient;
     Data data;
+    private final List<Marker> markerList = new ArrayList<>();
+
+    private Bitmap neutralShop;
+    private Bitmap yellowShop;
+    private Bitmap orangeShop;
+    private Bitmap redShop;
 
     public static Intent makeLaunch(Context context) {
         return new Intent(context, MapsActivity.class);
@@ -52,6 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         initializeModel();
+
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -109,7 +118,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
+                        if (location != null && getIntent().getIntExtra("position", -1) == -1) {
                             // Logic to handle location object
                             Double latitude = location.getLatitude();
                             Double longitude = location.getLongitude();
@@ -128,6 +137,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        neutralShop = resizeMapIcons("neutral", 130, 130);
+                        yellowShop = resizeMapIcons("shop_yellow", 130, 130);
+                        orangeShop = resizeMapIcons("shop_orange", 130, 130);
+                        redShop = resizeMapIcons("shop_red", 130, 130);
+
+
                         for (int i = 0; i < data.getRestaurantList().size(); i++) {
                             setMarkerColor(data.getRestaurant(i), i);
 
@@ -136,10 +151,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             @Override
                             public void onInfoWindowClick(Marker marker) {
                                 Intent intent = new Intent(MapsActivity.this, InspectionListActivity.class);
-                                String Tag = marker.getId();
+                                int position = (int) marker.getTag();
 
-                                intent.putExtra("string", Tag);
+                                intent.putExtra("position", position);
+
+
                                 startActivity(intent);
+                                finish();
                             }
                         });
 
@@ -150,6 +168,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 return false;
                             }
                         });
+                        int position = getIntent().getIntExtra("position", -1);
+                        if(position != -1){
+                            Marker marker = markerList.get(position);
+                            marker.showInfoWindow();
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 18));
+
+                        }
                     }
                 });
 
@@ -157,36 +182,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }).start();
 
 
+
     }
 
     private void setMarkerColor(Restaurant r, int position) {
         LatLng latLng = new LatLng(r.getLATITUDE(), r.getLONGITUDE());
         MarkerOptions options = new MarkerOptions().position(latLng).title(r.getNAME());
-        if (r.hasInspection())
+
+        // default icon set to no inspections
+        Bitmap resizeMapIcons = neutralShop;
+        if (r.hasInspection()) {
             switch (r.getMostRecentInspection().getHAZARD_RATING().toUpperCase()) {
                 case "LOW":
-                    Bitmap resizeMapIcons = resizeMapIcons("shop_yellow", 130, 130);
-                    mMap.addMarker(options.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons)));
+                    resizeMapIcons = yellowShop;
+
                     break;
                 case "MODERATE":
-                    Bitmap resizeMapIcons2 = resizeMapIcons("shop_orange", 130, 130);
-                    mMap.addMarker(options.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons2)));
+                    resizeMapIcons = orangeShop;
                     break;
                 case "HIGH":
-                    Bitmap resizeMapIcons3 = resizeMapIcons("shop_red", 130, 130);
-                    mMap.addMarker(options.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons3)));
+                    resizeMapIcons = redShop;
                     break;
                 default:
                     break;
             }
-        if (!r.hasInspection()) {
-            Bitmap resizeMapIcons4 = resizeMapIcons("neutral", 130, 130);
-            mMap.addMarker(options.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons4))).setTag(position);
         }
+        Marker marker = mMap.addMarker(options.icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons)));
+        marker.setTag(position);
+        markerList.add(marker);
+
 
     }
 
-    public Bitmap resizeMapIcons(String iconName, int width, int height) {
+    private Bitmap resizeMapIcons(String iconName, int width, int height) {
         Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), getResources().getIdentifier(iconName, "drawable", getPackageName()));
         return Bitmap.createScaledBitmap(imageBitmap, width, height, false);
     }
@@ -210,5 +238,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         data.init(this);    // must init before use
     }
 
-
+//    private void setUpClusterer() {
+//        // Position the map.
+//
+//        // Initialize the manager with the context and the map.
+//        // (Activity extends context, so we can pass 'this' in the constructor.)
+//        mClusterManager = new ClusterManager<Marker>(this, mMap);
+//
+//        // Point the map's listeners at the listeners implemented by the cluster
+//        // manager.
+//        getMap().setOnCameraIdleListener(mClusterManager);
+//        getMap().setOnMarkerClickListener(mClusterManager);
+//
+//        // Add cluster items (markers) to the cluster manager.
+//        addItems();
+//    }
+//
+//    private void addItems() {
+//
+//        // Set some lat/lng coordinates to start with.
+//        double lat = 51.5145160;
+//        double lng = -0.1270060;
+//
+//        // Add ten cluster items in close proximity, for purposes of this example.
+//        for (int i = 0; i < 10; i++) {
+//            double offset = i / 60d;
+//            lat = lat + offset;
+//            lng = lng + offset;
+//            MyItem offsetItem = new MyItem(lat, lng);
+//            mClusterManager.addItem(offsetItem);
+//        }
+//    }
 }
