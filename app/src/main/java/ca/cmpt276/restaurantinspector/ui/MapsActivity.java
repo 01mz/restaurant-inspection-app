@@ -1,8 +1,8 @@
 package ca.cmpt276.restaurantinspector.ui;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
@@ -12,9 +12,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -23,14 +21,19 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,14 +45,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private static final int ACCESS_LOCATION_REQUEST_CODE = 10001;
     private GoogleMap mMap;
-    FusedLocationProviderClient fusedLocationProviderClient;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private ClusterManager<RestaurantMarker> mClusterManager;
+
     Data data;
     private final List<Marker> markerList = new ArrayList<>();
+    private final List<RestaurantMarker> restaurantMarkerList = new ArrayList<>();
 
     private Bitmap neutralShop;
     private Bitmap yellowShop;
     private Bitmap orangeShop;
     private Bitmap redShop;
+
 
     public static Intent makeLaunch(Context context) {
         return new Intent(context, MapsActivity.class);
@@ -96,7 +103,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         enableUserLocation();
-
     }
 
     private void enableUserLocation() {
@@ -120,8 +126,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         // Got last known location. In some rare situations this can be null.
                         if (location != null && getIntent().getIntExtra("position", -1) == -1) {
                             // Logic to handle location object
-                            Double latitude = location.getLatitude();
-                            Double longitude = location.getLongitude();
+                            double latitude = location.getLatitude();
+                            double longitude = location.getLongitude();
                             LatLng latLng = new LatLng(latitude, longitude);
 //                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18), 3200, null);
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
@@ -130,56 +136,70 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
 
-        new Thread(new Runnable() {
+        mClusterManager = new ClusterManager<>(this, mMap);
+        mMap.setOnCameraIdleListener(mClusterManager);
 
-            public void run(){
+        mClusterManager.setRenderer(new OwnIconRendered(this.getApplicationContext(), mMap, mClusterManager));
+        mClusterManager.setOnClusterItemInfoWindowClickListener(new ClusterManager.OnClusterItemInfoWindowClickListener<RestaurantMarker>() {
+            @Override
+            public void onClusterItemInfoWindowClick(RestaurantMarker item) {
+                Intent intent = new Intent(MapsActivity.this, InspectionListActivity.class);
+                int restaurantIndex = item.getRestaurantId();
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        neutralShop = resizeMapIcons("neutral", 130, 130);
-                        yellowShop = resizeMapIcons("shop_yellow", 130, 130);
-                        orangeShop = resizeMapIcons("shop_orange", 130, 130);
-                        redShop = resizeMapIcons("shop_red", 130, 130);
-
-
-                        for (int i = 0; i < data.getRestaurantList().size(); i++) {
-                            setMarkerColor(data.getRestaurant(i), i);
-
-                        }
-                        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                            @Override
-                            public void onInfoWindowClick(Marker marker) {
-                                Intent intent = new Intent(MapsActivity.this, InspectionListActivity.class);
-                                int position = (int) marker.getTag();
-
-                                intent.putExtra("position", position);
+                intent.putExtra("position", restaurantIndex);
 
 
-                                startActivity(intent);
-                                finish();
-                            }
-                        });
-
-                        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-
-                            @Override
-                            public boolean onMarkerClick(Marker marker) {
-                                return false;
-                            }
-                        });
-                        int position = getIntent().getIntExtra("position", -1);
-                        if(position != -1){
-                            Marker marker = markerList.get(position);
-                            marker.showInfoWindow();
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 18));
-
-                        }
-                    }
-                });
-
+                startActivity(intent);
+                finish();
             }
-        }).start();
+        });
+//        mMap.setOnMarkerClickListener(mClusterManager);
+
+
+        // setup markers
+        neutralShop = resizeMapIcons("neutral", 130, 130);
+        yellowShop = resizeMapIcons("shop_yellow", 130, 130);
+        orangeShop = resizeMapIcons("shop_orange", 130, 130);
+        redShop = resizeMapIcons("shop_red", 130, 130);
+
+
+        int numRestaurants = data.getRestaurantList().size();
+        for (int i = 0; i < numRestaurants; i++) {
+            //setMarkerColor(data.getRestaurant(i), i);
+            Restaurant r = data.getRestaurant(i);
+
+            RestaurantMarker restaurantMarker = new RestaurantMarker(r.getLATITUDE(), r.getLONGITUDE(), r.getNAME(), r.getADDRESS(), i);
+            mClusterManager.addItem(restaurantMarker);
+
+            // Handle MapActivity started by GPS button in InspectionListActivity
+
+
+
+        }
+
+
+//        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+//            @Override
+//            public void onInfoWindowClick(Marker marker) {
+//                Intent intent = new Intent(MapsActivity.this, InspectionListActivity.class);
+//                int position = (int) marker.getTag();
+//
+//                intent.putExtra("position", position);
+//
+//
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
+//
+//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(Marker marker) {
+//                return false;
+//            }
+//        });
+
+
 
 
 
@@ -269,4 +289,99 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //            mClusterManager.addItem(offsetItem);
 //        }
 //    }
+
+//    https://github.com/googlemaps/
+    private class RestaurantMarker implements ClusterItem {
+        private final LatLng mPosition;
+        private final String mTitle;
+        private final String mSnippet;
+        private final int restaurantIndex;
+
+
+        public RestaurantMarker(double lat, double lng, String title, String snippet, int restaurantIndex) {
+            mPosition = new LatLng(lat, lng);
+            mTitle = title;
+            mSnippet = snippet;
+            this.restaurantIndex = restaurantIndex;
+        }
+
+        @NonNull
+        @Override
+        public LatLng getPosition() {
+            return mPosition;
+        }
+
+        @Nullable
+        @Override
+        public String getTitle() {
+            return mTitle;
+        }
+
+        @Nullable
+        @Override
+        public String getSnippet() {
+            return mSnippet;
+        }
+
+
+        public BitmapDescriptor getIcon() {
+            Restaurant r = data.getRestaurant(restaurantIndex);
+            // default icon set to no inspections
+            Bitmap resizeMapIcons = neutralShop;
+            if (r.hasInspection()) {
+                switch (r.getMostRecentInspection().getHAZARD_RATING().toUpperCase()) {
+                    case "LOW":
+                        resizeMapIcons = yellowShop;
+
+                        break;
+                    case "MODERATE":
+                        resizeMapIcons = orangeShop;
+                        break;
+                    case "HIGH":
+                        resizeMapIcons = redShop;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return BitmapDescriptorFactory.fromBitmap(resizeMapIcons);
+        }
+
+        public int getRestaurantId() {
+            return restaurantIndex;
+        }
+    }
+
+    // Set marker icon
+    // https://stackoverflow.com/questions/27745299/how-to-add-title-snippet-and-icon-to-clusteritem
+    private class OwnIconRendered extends DefaultClusterRenderer<RestaurantMarker> {
+
+        public OwnIconRendered(Context context, GoogleMap map,
+                               ClusterManager<RestaurantMarker> clusterManager) {
+            super(context, map, clusterManager);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(RestaurantMarker item, MarkerOptions markerOptions) {
+            markerOptions.icon(item.getIcon());
+            markerOptions.snippet(item.getSnippet());
+            markerOptions.title(item.getTitle());
+            super.onBeforeClusterItemRendered(item, markerOptions);
+        }
+
+        @Override
+        protected void onClusterItemRendered(@NonNull RestaurantMarker clusterItem, @NonNull Marker marker) {
+            super.onClusterItemRendered(clusterItem, marker);
+            int index = MapsActivity.this.getIntent().getIntExtra("position", -1);
+            if(clusterItem.getRestaurantId() == index){
+                    marker.showInfoWindow();
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 18));
+
+            }
+        }
+
+
+    }
+
+
 }
