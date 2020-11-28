@@ -18,7 +18,8 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/app_icon_search"
         android:supportsRtl="true"
-        android:theme="@style/Theme.RestaurantInspector">
+        android:theme="@style/Theme.RestaurantInspector"
+        android:launchMode="singleTop">
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -34,7 +35,8 @@
 
         <activity
             android:name=".ui.MapsActivity"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,7 +59,8 @@
             android:name=".ui.RestaurantListActivity"
             android:configChanges="keyboard|orientation|keyboardHidden|screenSize"
             android:label="@string/restaurants"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:launchMode="singleInstance">
         </activity>
     </application>
 

@@ -57,10 +57,9 @@ public class InspectionListActivity extends AppCompatActivity {
         restaurantGPS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = MapsActivity.makeLaunch(InspectionListActivity.this);
+                Intent i = new Intent();
                 i.putExtra("position", position);
-                startActivity(i);
-
+                setResult(Activity.RESULT_OK, i);
                 finish();
             }
         });

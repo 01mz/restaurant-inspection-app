@@ -1,5 +1,6 @@
 package ca.cmpt276.restaurantinspector.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import ca.cmpt276.restaurantinspector.model.InspectionDate;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
 import ca.cmpt276.restaurantinspector.ui.InspectionListActivity;
 
+import static androidx.core.app.ActivityCompat.startActivityForResult;
 import static androidx.core.content.ContextCompat.startActivity;
 
 /**
@@ -28,6 +30,7 @@ import static androidx.core.content.ContextCompat.startActivity;
  */
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.ViewHolder> {
 
+    private static final int REQUEST_CODE_INSPECTION_LIST = 102;
     List<Restaurant> restaurantList;
     Context context;
 
@@ -118,7 +121,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             i.putExtra("address", restaurant.getADDRESS());
             i.putExtra("latitude", restaurant.getLATITUDE());
             i.putExtra("longitude", restaurant.getLONGITUDE());
-            startActivity(context,i,null);
+            startActivityForResult((Activity)context, i, REQUEST_CODE_INSPECTION_LIST, null);
         });
 
     }
