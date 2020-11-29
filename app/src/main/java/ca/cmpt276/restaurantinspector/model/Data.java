@@ -47,6 +47,7 @@ public class Data {
 
     // Singleton code
     private static Data instance = null;
+    private boolean isUpdated = false;
 
     private Data(){ }
 
@@ -187,5 +188,11 @@ public class Data {
     }
 
 
+    public boolean isUpdated() {
+        return isUpdated;
+    }
 
+    public void setUpdated(boolean updated){
+        isUpdated = updated;
+    }
 }

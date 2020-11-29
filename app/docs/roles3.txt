@@ -1,0 +1,5 @@
+Iteration 1
+Scrum Master: Michael
+Product Owner: Edmond
+Repo Manager: Everyone
+Team Member: Archit

@@ -36,12 +36,14 @@
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/restaurantGPS"
+        <Button
+            android:id="@+id/buttonGps"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/gps_coordinates"
-            android:textColor="?android:attr/textColorPrimary" />
+            android:background="#FFFFFF"
+            android:text="Gps coordinates"
+            android:textColor="#FFFFFF" />
 
     </LinearLayout>
 

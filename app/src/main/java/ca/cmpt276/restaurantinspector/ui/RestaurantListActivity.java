@@ -1,13 +1,14 @@
 package ca.cmpt276.restaurantinspector.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -38,6 +39,7 @@ import ca.cmpt276.restaurantinspector.model.Restaurant;
 public class RestaurantListActivity extends AppCompatActivity {
     // Downloading files
     private static final String LAST_UPDATED_KEY = "Date of last update";
+    private static final int REQUEST_CODE_INSPECTION_LIST = 102;
     private final String RESTAURANTS_JSON_URL = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
     private final String INSPECTIONS_JSON_URL = "https://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
 
@@ -73,14 +75,10 @@ public class RestaurantListActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         Objects.requireNonNull(ab).hide();
 
-        Button buttonSeeMap = (Button) findViewById(R.id.buttonSeeMap);
-        buttonSeeMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = MapsActivity.makeLaunch(RestaurantListActivity.this);
-                startActivity(i);
-                finish();
-            }
+        Button buttonSeeMap = findViewById(R.id.buttonSeeMap);
+        buttonSeeMap.setOnClickListener(v -> {
+            setResult(Activity.RESULT_OK, null);
+            finish();
         });
     }
 
@@ -242,6 +240,7 @@ public class RestaurantListActivity extends AppCompatActivity {
 
     private void onDownloadSuccess() {
         downloadingDialog.dismiss();
+        data.setUpdated(true);
 
         // Replace the old csv files with the new csv files (temp) by renaming the temp files
         final File restaurantsCsvFileTemp = new File(getExternalFilesDir(null), RESTAURANTS_CSV_FILENAME + "temp");
@@ -309,5 +308,19 @@ public class RestaurantListActivity extends AppCompatActivity {
     protected void onStop() {
         cancelDownloads();
         super.onStop();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_INSPECTION_LIST:
+                // use intent
+                if (resultCode == Activity.RESULT_OK) {
+                    setResult(Activity.RESULT_OK, data);
+                    finish();
+                }
+                break;
+        }
     }
 }

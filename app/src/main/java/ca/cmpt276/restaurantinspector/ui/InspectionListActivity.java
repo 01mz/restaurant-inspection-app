@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -49,7 +51,15 @@ public class InspectionListActivity extends AppCompatActivity {
     private void setupRestaurantInfoTextViews(int position) {
         TextView restaurantName = findViewById(R.id.RestaurantName);
         TextView restaurantAddress = findViewById(R.id.restaurantAddress);
-        TextView restaurantGPS = findViewById(R.id.restaurantGPS);
+        //TextView restaurantGPS = findViewById(R.id.restaurantGPS);
+        Button restaurantGPS = findViewById(R.id.buttonGps);
+
+        restaurantGPS.setOnClickListener(v -> {
+            Intent i = new Intent();
+            i.putExtra("position", position);
+            setResult(Activity.RESULT_OK, i);
+            finish();
+        });
 
         Restaurant restaurant = data.getRestaurant(position);
         restaurantName.setText(restaurant.getNAME());
