@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Restaurant inspecteur</string>
+    <string name="hazard_level_image_desc">gevarenniveau</string>
+    <string name="restaurant_logo_image_desc">Restaurant Logo</string>
+    <string name="restaurant_name">Restaurantnaam</string>
+    <string name="inspection_date">Inspectiedatum</string>
+    <string name="number_of_issues"># van problemen: 0</string>
+    <string name="no_inspections">Nog geen inspectie</string>
+    <string name="inspected_days_ago">Geïnspecteerd %d dagen geleden</string>
+    <string name="inspection_on_month_day">Geïnspecteerd: %s %d</string>
+    <string name="inspection_on_month_year">Geïnspecteerd: %s %d</string>
+    <string name="num_issues"># van problemen: %d</string>
+    <string name="num_crit_issues"># van kritieke problemen: %d</string>
+    <string name="num_non_crit_issues"># van niet-kritieke problemen: %d</string>
+    <string name="restaurants">Restaurants</string>
+    <string name="address">Adres</string>
+    <string name="gps_coordinates">GPS coördinaten</string>
+    <string name="inspections">Inspecties</string>
+    <string name="default_description">Plannen / constructie / verbouwing niet in overeenstemming met de verordening [s. 3; s. 4]</string>
+    <string name="violation_severity">ernst van de overtreding</string>
+    <string name="violation_type">schendingstype</string>
+    <string name="inspection_type">inspectie type</string>
+    <string name="hazard_level">gevarenniveau</string>
+    <string name="inspection">Inspectie</string>
+    <string name="violations">Overtredingen</string>
+    <string name="inspection_type_in_violation">%s inspectie</string>
+    <string name="no_violations">Geen overtredingen</string>
+    <string name="no_inspections_yet">Nog geen inspecties.</string>
+    <string name="restaurant_inspection">%s inspectie</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="star">ster</string>
+    <string name="checking_for_updates">Controleren op updates…</string>
+    <string name="unable_to_check_for_updates">Kan updates niet controleren. Controleer uw verbinding.</string>
+    <string name="unable_to_update">Kan gegevens niet bijwerken of update is geannuleerd.</string>
+    <string name="update_available">Update beschikbaar.</string>
+    <string name="update_question">Zou je willen updaten?</string>
+    <string name="no">Nee</string>
+    <string name="yes">Ja</string>
+    <string name="downloading">Downloaden…</string>
+    <string name="title_activity_maps">Kaart</string>
+    <string name="see_list">Zie lijst</string>
+    <string name="see_map">Zie kaart</string>
+
+</resources>
