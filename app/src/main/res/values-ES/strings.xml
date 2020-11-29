@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Inspector de restaurante</string>
+    <string name="hazard_level_image_desc">nivel de peligro</string>
+    <string name="restaurant_logo_image_desc">Logotipo del restaurante</string>
+    <string name="restaurant_name">Nombre del restaurante</string>
+    <string name="inspection_date">Fecha de inspección</string>
+    <string name="number_of_issues"># de problemas: 0</string>
+    <string name="no_inspections">Sin inspección todavía</string>
+    <string name="inspected_days_ago">Inspeccionado %d hace días</string>
+    <string name="inspection_on_month_day">Inspeccionado en: %s %d</string>
+    <string name="inspection_on_month_year">Inspeccionado en: %s %d</string>
+    <string name="num_issues"># de problemas: %d</string>
+    <string name="num_crit_issues"># de problemas críticos: %d</string>
+    <string name="num_non_crit_issues"># de problemas no críticos: %d</string>
+    <string name="restaurants">Restaurantes</string>
+    <string name="address">Habla a</string>
+    <string name="gps_coordinates">coordenadas GPS</string>
+    <string name="inspections">Inspecciones</string>
+    <string name="default_description">Planos / construcción / reformas no conforme al Reglamento [s. 3; s. 4]</string>
+    <string name="violation_severity">severidad de la violación</string>
+    <string name="violation_type">tipo de infracción</string>
+    <string name="inspection_type">tipo de inspección</string>
+    <string name="hazard_level">nivel de peligro</string>
+    <string name="inspection">Inspección</string>
+    <string name="violations">Infracciones</string>
+    <string name="inspection_type_in_violation">%s inspección</string>
+    <string name="no_violations">Sin violaciones</string>
+    <string name="no_inspections_yet">Aún no hay inspecciones.</string>
+    <string name="restaurant_inspection">%s inspección</string>
+    <string name="restaurant">Restaurante</string>
+    <string name="star">estrella</string>
+    <string name="checking_for_updates">Comprobando actualizaciones…</string>
+    <string name="unable_to_check_for_updates">No se puede comprobar las actualizaciones. Comprueba tu conexión.</string>
+    <string name="unable_to_update">No se pueden actualizar los datos o se canceló la actualización.</string>
+    <string name="update_available">Actualización disponible.</string>
+    <string name="update_question">Te gustaría actualizar?</string>
+    <string name="no">No</string>
+    <string name="yes">Si</string>
+    <string name="downloading">Descargando…</string>
+    <string name="title_activity_maps">Mapa</string>
+    <string name="see_list">Ver lista</string>
+    <string name="see_map">Ver mapa</string>
+
+</resources>
