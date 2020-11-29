@@ -54,14 +54,11 @@ public class InspectionListActivity extends AppCompatActivity {
         //TextView restaurantGPS = findViewById(R.id.restaurantGPS);
         Button restaurantGPS = findViewById(R.id.buttonGps);
 
-        restaurantGPS.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent();
-                i.putExtra("position", position);
-                setResult(Activity.RESULT_OK, i);
-                finish();
-            }
+        restaurantGPS.setOnClickListener(v -> {
+            Intent i = new Intent();
+            i.putExtra("position", position);
+            setResult(Activity.RESULT_OK, i);
+            finish();
         });
 
         Restaurant restaurant = data.getRestaurant(position);

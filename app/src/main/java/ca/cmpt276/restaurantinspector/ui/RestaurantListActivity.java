@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -76,13 +75,10 @@ public class RestaurantListActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         Objects.requireNonNull(ab).hide();
 
-        Button buttonSeeMap = (Button) findViewById(R.id.buttonSeeMap);
-        buttonSeeMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setResult(Activity.RESULT_OK, null);
-                finish();
-            }
+        Button buttonSeeMap = findViewById(R.id.buttonSeeMap);
+        buttonSeeMap.setOnClickListener(v -> {
+            setResult(Activity.RESULT_OK, null);
+            finish();
         });
     }
 
@@ -244,6 +240,7 @@ public class RestaurantListActivity extends AppCompatActivity {
 
     private void onDownloadSuccess() {
         downloadingDialog.dismiss();
+        data.setUpdated(true);
 
         // Replace the old csv files with the new csv files (temp) by renaming the temp files
         final File restaurantsCsvFileTemp = new File(getExternalFilesDir(null), RESTAURANTS_CSV_FILENAME + "temp");
