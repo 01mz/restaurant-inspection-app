@@ -45,9 +45,13 @@ public class Data {
     private final Map<String, Restaurant> restaurantMap = new HashMap<>();
     private List<Restaurant> sortedRestaurantList;
 
+    // Search and filtering
+    private List<Restaurant> filteredRestaurantList;
+    private boolean isUpdated = false;
+    private String search = "";
+
     // Singleton code
     private static Data instance = null;
-    private boolean isUpdated = false;
 
     private Data(){ }
 
@@ -60,11 +64,11 @@ public class Data {
 
     // Returns a list of Restaurants in alphabetical order by name
     public List<Restaurant> getRestaurantList() {
-        return Collections.unmodifiableList(sortedRestaurantList);
+        return Collections.unmodifiableList(filteredRestaurantList);
     }
 
     public Restaurant getRestaurant(int index) {
-        return sortedRestaurantList.get(index);
+        return filteredRestaurantList.get(index);
     }
 
     public Restaurant getRestaurantByTrackingNumber(String trackingNumber){
@@ -79,6 +83,7 @@ public class Data {
 
         createSortedRestaurantList();
         sortRestaurantInspections();
+        filteredRestaurantList = new ArrayList<>(sortedRestaurantList);
     }
 
     private void convertRestaurantCSV(Context context) {
@@ -194,5 +199,28 @@ public class Data {
 
     public void setUpdated(boolean updated){
         isUpdated = updated;
+    }
+
+    public void updateFilteredList(String search) {
+        this.search = search;
+        filteredRestaurantList.clear();
+        if(search.isEmpty()) {
+            // add all restaurants
+            filteredRestaurantList.addAll(sortedRestaurantList);
+
+        } else {
+            // add filtered restaurants
+            for(Restaurant r : sortedRestaurantList) {
+                if(r.getNAME().toLowerCase().contains(search)) {
+                    filteredRestaurantList.add(r);
+
+                }
+            }
+
+        }
+    }
+
+    public String getCurrentSearch() {
+        return search;
     }
 }

@@ -70,7 +70,6 @@ public class RestaurantListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_list);
-        initializeModel();
 
         setupRestaurantListRecyclerView();
         updateFiles();
@@ -256,6 +255,7 @@ public class RestaurantListActivity extends AppCompatActivity {
         inspectionsCsvFileTemp.renameTo(inspectionsCsvFile);
 
         data.init(RestaurantListActivity.this);
+
         setupRestaurantListRecyclerView();
 
         // update last modified
@@ -334,7 +334,19 @@ public class RestaurantListActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
         MenuItem item = menu.findItem(R.id.action_search);
+
         SearchView searchView = (SearchView) item.getActionView();
+
+        // populate with search menu with current search
+        String currentSearch = data.getCurrentSearch();
+        if(currentSearch != null && !currentSearch.isEmpty()){
+            item.expandActionView();
+            searchView.onActionViewExpanded();
+            searchView.setIconified(false);
+            searchView.setQuery(currentSearch, false);
+            searchView.clearFocus();    // hide keyboard
+        }
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

@@ -184,24 +184,14 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         // background thread
         @Override
         protected FilterResults performFiltering(CharSequence constraint /* user search text */) {
+            data.setUpdated(true);
             String search = constraint.toString().trim().toLowerCase(); // case insensitive search
 
-            List<Restaurant> restaurantListAll = data.getRestaurantList();
-            List<Restaurant> filteredList = new ArrayList<>();
-            if(search.isEmpty()) {
-                // show all restaurants
-                filteredList.addAll(restaurantListAll);
+            // get filtered restaurants
+            data.updateFilteredList(search);
+            List<Restaurant> filteredList = new ArrayList<>(data.getRestaurantList());
 
-            } else {
-                // show filtered restaurants
-                for(Restaurant r : restaurantListAll) {
-                    if(r.getNAME().toLowerCase().contains(search)) {
-                        filteredList.add(r);
 
-                    }
-                }
-
-            }
             FilterResults filterResults = new FilterResults();
             filterResults.values = filteredList;
             return filterResults;

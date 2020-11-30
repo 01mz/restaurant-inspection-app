@@ -9,12 +9,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -32,13 +37,15 @@ import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.model.Data;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, Filterable {
 
     private static final int ACCESS_LOCATION_REQUEST_CODE = 10001;
     private static final int REQUEST_CODE_RESTAURANT_LIST = 101;
@@ -55,6 +62,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Bitmap redShop;
     private int intentIndex = -1;
     private final String TAG = "debug Maps";
+    private MenuItem searchItem;
+    private SearchView searchView;
 
 
     @Override
@@ -71,13 +80,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         Objects.requireNonNull(mapFragment).getMapAsync(this);
 
+
+
         Button buttonSeeList = findViewById(R.id.buttonSeeList);
         buttonSeeList.setOnClickListener(v -> {
             Intent i = RestaurantListActivity.makeLaunch(MapsActivity.this);
             startActivityForResult(i, REQUEST_CODE_RESTAURANT_LIST);
 
         });
+
+
     }
+
 
 
     /**
@@ -104,6 +118,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         enableUserLocation();
         setupMarkers();
+
+
     }
 
     private void enableUserLocation() {
@@ -213,11 +229,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Custom cluster item Code from:  https://github.com/googlemaps/
     private class RestaurantMarker implements ClusterItem {
+
         private final LatLng mPosition;
         private final String mTitle;
         private final String mSnippet;
         private final int restaurantIndex;
-
 
         public RestaurantMarker(double lat, double lng, String title, String snippet, int restaurantIndex) {
             mPosition = new LatLng(lat, lng);
@@ -270,17 +286,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public int getRestaurantIndex() {
             return restaurantIndex;
         }
-    }
 
+    }
     // Customize the rendering of the ClusterItems
     // https://stackoverflow.com/questions/27745299/how-to-add-title-snippet-and-icon-to-clusteritem
     // De-cluster on full zoom:
     // https://stackoverflow.com/a/43940715/8930125
     private class MyRenderer extends DefaultClusterRenderer<RestaurantMarker> implements GoogleMap.OnCameraMoveListener {
-        private static final int ZOOM_BUFFER = 2;
+
+        private static final int ZOOM_BUFFER = 5;
         private final float maxZoomLevel;
         private float currentZoomLevel;
-
         public MyRenderer(Context context, GoogleMap map,
                           ClusterManager<RestaurantMarker> clusterManager) {
             super(context, map, clusterManager);
@@ -302,7 +318,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if(clusterItem.getRestaurantIndex() == intentIndex) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(49, -152), 19));
                 marker.showInfoWindow();
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 19));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 18));
                 Log.i("Clustering", "" + intentIndex);
                 intentIndex = -1;
             }
@@ -328,10 +344,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return superWouldCluster;
         }
 
-    }
 
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+        updateSearchMenuText();
         super.onActivityResult(requestCode, resultCode, intent);
         switch (requestCode) {
             case REQUEST_CODE_INSPECTION_LIST:
@@ -346,12 +363,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 } else if (resultCode == Activity.RESULT_OK){
                     if(data.isUpdated()) {
                         data.setUpdated(false);
-                        mClusterManager.clearItems();
-                        mMap.clear();
-                        setupMarkers();
+                        updateMarkers();
                     }
                     if(intent != null) {
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(49, -152), 19));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(49, -152), 18));
 
                         Log.i(TAG, "back to map from gps button");
                         intentIndex = intent.getIntExtra("position", -1);
@@ -374,4 +389,75 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
         }
     }
+
+    private void updateMarkers() {
+        mClusterManager.clearItems();
+        mMap.clear();
+        setupMarkers();
+    }
+
+    // Search menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+
+
+        searchItem = menu.findItem(R.id.action_search);
+
+        searchView = (SearchView) searchItem.getActionView();
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                getFilter().filter(newText);
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public void updateSearchMenuText() {
+        // populate with search menu with current search
+        String currentSearch = data.getCurrentSearch();
+        if(currentSearch != null && !currentSearch.isEmpty()){
+            searchItem.expandActionView();
+            searchView.onActionViewExpanded();
+            searchView.setIconified(false);
+            searchView.setQuery(currentSearch, false);
+            searchView.clearFocus();    // hide keyboard
+        }
+    }
+
+    // Search filtering
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            String search = constraint.toString().trim().toLowerCase(); // case insensitive search
+
+            // get filtered restaurants
+            data.updateFilteredList(search);
+            List<Restaurant> filteredList = new ArrayList<>(data.getRestaurantList());
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            updateMarkers();
+        }
+    };
 }
