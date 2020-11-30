@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -56,6 +59,7 @@ public class RestaurantListActivity extends AppCompatActivity {
     private DownloadingDialog downloadingDialog;
 
 
+    RestaurantAdapter restaurantAdapter;
     Data data = Data.getInstance();  // model
 
     public static Intent makeLaunch(Context context) {
@@ -71,9 +75,9 @@ public class RestaurantListActivity extends AppCompatActivity {
         setupRestaurantListRecyclerView();
         updateFiles();
 
-        // Hide action bar
-        ActionBar ab = getSupportActionBar();
-        Objects.requireNonNull(ab).hide();
+//        // Hide action bar
+//        ActionBar ab = getSupportActionBar();
+//        Objects.requireNonNull(ab).hide();
 
         Button buttonSeeMap = findViewById(R.id.buttonSeeMap);
         buttonSeeMap.setOnClickListener(v -> {
@@ -88,7 +92,8 @@ public class RestaurantListActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager((this)));
-        RestaurantAdapter restaurantAdapter = new RestaurantAdapter(list, RestaurantListActivity.this);
+
+        restaurantAdapter = new RestaurantAdapter(list, RestaurantListActivity.this);
         recyclerView.setAdapter(restaurantAdapter);
     }
 
@@ -322,5 +327,27 @@ public class RestaurantListActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    // Search menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) item.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                restaurantAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 }

@@ -145,6 +145,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         MyRenderer renderer = new MyRenderer(this.getApplicationContext(), mMap, mClusterManager);
+        mMap.setOnCameraMoveListener(renderer);
+        mMap.setOnCameraIdleListener(mClusterManager);
         mClusterManager.setRenderer(renderer);
         mClusterManager.setOnClusterItemInfoWindowClickListener(item -> {
             Intent intent = new Intent(MapsActivity.this, InspectionListActivity.class);
@@ -157,8 +159,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         });
 
-        mMap.setOnCameraMoveListener(renderer);
-        mMap.setOnCameraIdleListener(mClusterManager);
+
 
         // setup markers
         neutralShop = resizeMapIcons("neutral", 130, 130);
@@ -299,9 +300,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             super.onClusterItemRendered(clusterItem, marker);
             marker.setTag(clusterItem.getRestaurantIndex());
             if(clusterItem.getRestaurantIndex() == intentIndex) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(49, -152), 18));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(49, -152), 19));
                 marker.showInfoWindow();
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 18));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 19));
                 Log.i("Clustering", "" + intentIndex);
                 intentIndex = -1;
             }
@@ -350,7 +351,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         setupMarkers();
                     }
                     if(intent != null) {
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(49, -152), 28));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(49, -152), 19));
 
                         Log.i(TAG, "back to map from gps button");
                         intentIndex = intent.getIntExtra("position", -1);
@@ -365,7 +366,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         if(marker != null){
                             marker.showInfoWindow();
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 18));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 19));
                             Log.i("Clustering not", "" + intentIndex);
                         }
                     }
