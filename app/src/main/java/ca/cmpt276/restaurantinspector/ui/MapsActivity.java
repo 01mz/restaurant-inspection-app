@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
@@ -140,9 +141,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void setupMarkers() {
         mClusterManager = new ClusterManager<>(this, mMap);
-        mMap.setOnCameraIdleListener(mClusterManager);
 
-        mClusterManager.setRenderer(new MyRenderer(this.getApplicationContext(), mMap, mClusterManager));
+
+
+        MyRenderer renderer = new MyRenderer(this.getApplicationContext(), mMap, mClusterManager);
+        mClusterManager.setRenderer(renderer);
         mClusterManager.setOnClusterItemInfoWindowClickListener(item -> {
             Intent intent = new Intent(MapsActivity.this, InspectionListActivity.class);
             int restaurantIndex = item.getRestaurantIndex();
@@ -154,6 +157,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         });
 
+        mMap.setOnCameraMoveListener(renderer);
+        mMap.setOnCameraIdleListener(mClusterManager);
 
         // setup markers
         neutralShop = resizeMapIcons("neutral", 130, 130);
@@ -268,11 +273,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Customize the rendering of the ClusterItems
     // https://stackoverflow.com/questions/27745299/how-to-add-title-snippet-and-icon-to-clusteritem
-    private class MyRenderer extends DefaultClusterRenderer<RestaurantMarker> {
+    // De-cluster on full zoom:
+    // https://stackoverflow.com/a/43940715/8930125
+    private class MyRenderer extends DefaultClusterRenderer<RestaurantMarker> implements GoogleMap.OnCameraMoveListener {
+        private static final int ZOOM_BUFFER = 2;
+        private final float maxZoomLevel;
+        private float currentZoomLevel;
 
         public MyRenderer(Context context, GoogleMap map,
                           ClusterManager<RestaurantMarker> clusterManager) {
             super(context, map, clusterManager);
+            this.maxZoomLevel = map.getMaxZoomLevel() - ZOOM_BUFFER;
         }
 
         @Override
@@ -294,6 +305,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i("Clustering", "" + intentIndex);
                 intentIndex = -1;
             }
+        }
+
+        @Override
+        public void onCameraMove() {
+            currentZoomLevel = mMap.getCameraPosition().zoom;
+
+        }
+
+        @Override
+        protected boolean shouldRenderAsCluster(@NonNull Cluster<RestaurantMarker> cluster) {
+            // check if it would normally cluster (based on proximity)
+            boolean superWouldCluster = super.shouldRenderAsCluster(cluster);
+
+            // if it does, then check if it should based on zoom level
+            if (superWouldCluster) {
+                superWouldCluster = currentZoomLevel < maxZoomLevel;
+                Log.i(TAG, currentZoomLevel + " " + maxZoomLevel);
+            }
+
+            return superWouldCluster;
         }
 
     }
