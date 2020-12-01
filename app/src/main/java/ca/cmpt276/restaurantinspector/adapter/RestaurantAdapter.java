@@ -203,8 +203,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
             restaurantList.clear();
             restaurantList.addAll((Collection<? extends Restaurant>) results.values);
             notifyDataSetChanged();
+
         }
     };
+
+
+    public void updateDataSet() {
+        restaurantList.clear();
+        restaurantList.addAll(Data.getInstance().getRestaurantList());
+        notifyDataSetChanged();
+    }
 
 
 }

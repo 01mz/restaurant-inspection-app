@@ -40,5 +40,18 @@
     <string name="title_activity_maps">Map</string>
     <string name="see_list">See list</string>
     <string name="see_map">See Map</string>
+    <string name="search">Search</string>
+    <string name="filter">Filter</string>
+    <string name="restrict_to_favourites">Restrict to favourites</string>
+    <string name="cancel">Cancel</string>
+    <string name="max">Max:</string>
+    <string name="min">Min:</string>
+    <string name="number_of_violations_within_the_last_year">Number of violations within the last year</string>
+    <string name="hazard_level_of_most_recent_inspection">Hazard level of most recent inspection</string>
+    <string name="any">Any</string>
+    <string name="low">Low</string>
+    <string name="moderate">Moderate</string>
+    <string name="high">High</string>
+    <string name="filter_restaurants">Filter restaurants</string>
 
 </resources>

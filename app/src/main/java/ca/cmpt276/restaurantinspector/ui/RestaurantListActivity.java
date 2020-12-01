@@ -43,6 +43,7 @@ public class RestaurantListActivity extends AppCompatActivity {
     // Downloading files
     private static final String LAST_UPDATED_KEY = "Date of last update";
     private static final int REQUEST_CODE_INSPECTION_LIST = 102;
+    private static final int REQUEST_CODE_FILTER = 103;
     private final String RESTAURANTS_JSON_URL = "https://data.surrey.ca/api/3/action/package_show?id=restaurants";
     private final String INSPECTIONS_JSON_URL = "https://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
 
@@ -316,15 +317,19 @@ public class RestaurantListActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
         switch (requestCode) {
             case REQUEST_CODE_INSPECTION_LIST:
                 // use intent
                 if (resultCode == Activity.RESULT_OK) {
-                    setResult(Activity.RESULT_OK, data);
+                    setResult(Activity.RESULT_OK, intent);
                     finish();
                 }
+                break;
+            case REQUEST_CODE_FILTER:
+                restaurantAdapter.updateDataSet();
+                data.setUpdated(true);
                 break;
         }
     }
@@ -333,6 +338,17 @@ public class RestaurantListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
+
+        MenuItem filterItem = menu.findItem(R.id.action_filter);
+        filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                startActivityForResult(FilterActivity.makeLaunch(RestaurantListActivity.this), REQUEST_CODE_FILTER);
+
+                return true;
+            }
+        });
+
         MenuItem item = menu.findItem(R.id.action_search);
 
         SearchView searchView = (SearchView) item.getActionView();

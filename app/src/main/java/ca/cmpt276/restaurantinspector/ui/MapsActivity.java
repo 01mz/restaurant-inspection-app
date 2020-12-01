@@ -50,6 +50,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int ACCESS_LOCATION_REQUEST_CODE = 10001;
     private static final int REQUEST_CODE_RESTAURANT_LIST = 101;
     private static final int REQUEST_CODE_INSPECTION_LIST = 102;
+    private static final int REQUEST_CODE_FILTER = 103;
     private GoogleMap mMap;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private ClusterManager<RestaurantMarker> mClusterManager;
@@ -387,6 +388,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 }
                 break;
+            case REQUEST_CODE_FILTER:
+                updateMarkers();
+                break;
+
         }
     }
 
@@ -401,6 +406,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
 
+        MenuItem filterItem = menu.findItem(R.id.action_filter);
+        filterItem.setOnMenuItemClickListener(item -> {
+            startActivityForResult(FilterActivity.makeLaunch(MapsActivity.this), REQUEST_CODE_FILTER);
+            return true;
+        });
 
         searchItem = menu.findItem(R.id.action_search);
 

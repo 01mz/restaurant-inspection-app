@@ -1,39 +1,23 @@
 package ca.cmpt276.restaurantinspector.model;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.preference.PreferenceManager;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.koushikdutta.ion.Ion;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
-
-import ca.cmpt276.restaurantinspector.ui.RestaurantListActivity;
 
 /**
  * Data is a Singleton class with the restaurant data. Parses CSV and stores restaurants in a map.
@@ -45,10 +29,15 @@ public class Data {
     private final Map<String, Restaurant> restaurantMap = new HashMap<>();
     private List<Restaurant> sortedRestaurantList;
 
-    // Search and filtering
+    // Search
     private List<Restaurant> filteredRestaurantList;
     private boolean isUpdated = false;
     private String search = "";
+
+    // Filtering
+    private String includeInspectionLevel = "ANY";
+    private int maxViolationsFilter = 50;
+    private int minViolationsFilter = 0;
 
     // Singleton code
     private static Data instance = null;
@@ -84,6 +73,7 @@ public class Data {
         createSortedRestaurantList();
         sortRestaurantInspections();
         filteredRestaurantList = new ArrayList<>(sortedRestaurantList);
+        updateFilteredList(search);
     }
 
     private void convertRestaurantCSV(Context context) {
@@ -189,6 +179,11 @@ public class Data {
     private void sortRestaurantInspections() {
         for(Restaurant r : sortedRestaurantList){
             r.sortInspectionsByDate();
+            r.calculateNumViolationsWithinLastYear();
+            if(r.getNumViolationsWithinLastYear() > 20) {
+
+                Log.i("violations past year", "" + r.getNumViolationsWithinLastYear() );
+            }
         }
     }
 
@@ -216,11 +211,61 @@ public class Data {
 
                 }
             }
-
         }
+
+        filterByMostRecentInspectionLevel();
+        filterByViolationsWithinLastYear();
     }
 
     public String getCurrentSearch() {
         return search;
+    }
+
+    private void filterByMostRecentInspectionLevel() {
+        if (!includeInspectionLevel.equalsIgnoreCase("ANY")) {
+            List<Restaurant> newFilteredList = new ArrayList<>();
+            for (Restaurant r : filteredRestaurantList) {
+                if(r.hasInspection()) {
+                    String mostRecentHazardLevel = r.getMostRecentInspection().getHAZARD_RATING();
+                    if (includeInspectionLevel.equalsIgnoreCase(mostRecentHazardLevel)) {
+                        newFilteredList.add(r);
+                    }
+                }
+            }
+            filteredRestaurantList = newFilteredList;
+        }
+    }
+
+    private void filterByViolationsWithinLastYear() {
+        List<Restaurant> newFilteredList = new ArrayList<>();
+        for(Restaurant r : filteredRestaurantList) {
+            if (r.getNumViolationsWithinLastYear() >= minViolationsFilter && r.getNumViolationsWithinLastYear() <= maxViolationsFilter) {
+               newFilteredList.add(r);
+            }
+        }
+        filteredRestaurantList = newFilteredList;
+    }
+
+    public String getInspectionLevelFilter() {
+        return includeInspectionLevel;
+    }
+
+    public void setMostRecentInspectionHazardFilter(String level) {
+        this.includeInspectionLevel = level;
+        updateFilteredList(search);
+    }
+
+    public void setViolationsRangeFilter(int min, int max) {
+        minViolationsFilter = min;
+        maxViolationsFilter = max;
+        updateFilteredList(search);
+    }
+
+    public int getMinViolationsFilter() {
+        return minViolationsFilter;
+    }
+
+    public int getMaxViolationsFilter() {
+        return maxViolationsFilter;
     }
 }
