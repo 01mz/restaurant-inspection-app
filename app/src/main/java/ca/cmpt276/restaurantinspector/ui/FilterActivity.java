@@ -72,7 +72,7 @@ public class FilterActivity extends AppCompatActivity {
 
     private void setupToggleButtonForInspectionFilter() {
         MaterialButtonToggleGroup toggleGroupInspections = findViewById(R.id.toggleButtonRecentInspectionHazard);
-        toggleGroupInspections.check(R.id.buttonHazardAny);
+
 
         int selectedButtonId;
         switch(data.getInspectionLevelFilter()) {
@@ -90,6 +90,7 @@ public class FilterActivity extends AppCompatActivity {
                 break;
         }
         toggleGroupInspections.setSingleSelection(true);
+        toggleGroupInspections.setSelectionRequired(true);
         toggleGroupInspections.check(selectedButtonId);
 
         toggleGroupInspections.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
