@@ -45,6 +45,10 @@ import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.model.Data;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
 
+/**
+ * MapsActivity is responsible for the map screen. Responsibilities include generating markers,
+ * handling clustering, and searching and filtering.
+ */
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, Filterable {
 
     private static final int ACCESS_LOCATION_REQUEST_CODE = 10001;
@@ -73,7 +77,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         initializeModel();
 
-
+        // create icons for markers
+        neutralShop = resizeMapIcons("neutral", 130, 130);
+        yellowShop = resizeMapIcons("shop_yellow", 130, 130);
+        orangeShop = resizeMapIcons("shop_orange", 130, 130);
+        redShop = resizeMapIcons("shop_red", 130, 130);
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -98,42 +106,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     * This is where we can add markers or lines, add listeners or move the camera.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         mMap = googleMap;
         Log.i(TAG, "map ready");
-
-//        // Add a marker in Sydney and move the camera
-//        LatLng sydney = new LatLng(-34, 151);
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         enableUserLocation();
         setupMarkers();
-
-
     }
 
     private void enableUserLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
             ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_LOCATION_REQUEST_CODE);
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         mMap.setMyLocationEnabled(true);
@@ -145,21 +136,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         double latitude = location.getLatitude();
                         double longitude = location.getLongitude();
                         LatLng latLng = new LatLng(latitude, longitude);
-//                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18), 3200, null);
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
 
                     }
                 });
 
-
-
-
     }
 
     private void setupMarkers() {
         mClusterManager = new ClusterManager<>(this, mMap);
-
-
 
         MyRenderer renderer = new MyRenderer(this.getApplicationContext(), mMap, mClusterManager);
         mMap.setOnCameraMoveListener(renderer);
@@ -171,20 +156,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             intent.putExtra("position", restaurantIndex);
 
-
             startActivityForResult(intent, REQUEST_CODE_INSPECTION_LIST);
 
         });
 
 
-
         // setup markers
-        neutralShop = resizeMapIcons("neutral", 130, 130);
-        yellowShop = resizeMapIcons("shop_yellow", 130, 130);
-        orangeShop = resizeMapIcons("shop_orange", 130, 130);
-        redShop = resizeMapIcons("shop_red", 130, 130);
-
-
         int numRestaurants = data.getRestaurantList().size();
         if(intentIndex != -1) {
             Restaurant r = data.getRestaurant(intentIndex);
@@ -193,7 +170,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mClusterManager.addItem(restaurantMarker);
         }
         for (int i = 0; i < numRestaurants; i++) {
-            //setMarkerColor(data.getRestaurant(i), i);
             if(i == intentIndex ){
                 continue;
             }
@@ -228,7 +204,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         data.init(this);    // must init before use
     }
 
-    // Custom cluster item Code from:  https://github.com/googlemaps/
+    // Custom ClusterItem
+    // Code from:  https://github.com/googlemaps/
     private class RestaurantMarker implements ClusterItem {
 
         private final LatLng mPosition;
@@ -347,6 +324,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         updateSearchMenuText();
@@ -401,6 +379,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setupMarkers();
     }
 
+    // Help from: https://youtu.be/CTvzoVtKoJ8
     // Search menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -442,6 +421,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             searchView.setIconified(false);
             searchView.setQuery(currentSearch, false);
             searchView.clearFocus();    // hide keyboard
+        } else {
+            searchItem.collapseActionView();
         }
     }
 

@@ -1,20 +1,14 @@
 package ca.cmpt276.restaurantinspector.ui;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.InputFilter;
-import android.text.Spanned;
-import android.text.TextWatcher;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.slider.RangeSlider;
@@ -24,8 +18,12 @@ import java.util.Objects;
 import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.model.Data;
 
+/**
+ * FilterActivity displays the filter options. Filter by hazard level of most recent inspection,
+ * number of violations in the past year, and favorite restaurants.
+ */
 public class FilterActivity extends AppCompatActivity {
-    private Data data = Data.getInstance();
+    private final Data data = Data.getInstance();
 
     public static Intent makeLaunch(Context context) {
         return new Intent(context, FilterActivity.class);
@@ -40,6 +38,8 @@ public class FilterActivity extends AppCompatActivity {
 
         setupRangeSliderForNumViolationFilter();
 
+        setupSwitchButtonForFavoritesFilter();
+
         // Enable "up" on toolbar
         ActionBar ab = getSupportActionBar();
         Objects.requireNonNull(ab).setDisplayHomeAsUpEnabled(true);
@@ -47,7 +47,7 @@ public class FilterActivity extends AppCompatActivity {
 
     }
 
-    // Up button
+    // Handle up button
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -56,20 +56,6 @@ public class FilterActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    private void setupRangeSliderForNumViolationFilter() {
-        RangeSlider rangeSliderNumViolations = findViewById(R.id.rangeSliderNumViolations);
-        rangeSliderNumViolations.showContextMenu();
-
-        rangeSliderNumViolations.setValues((float) data.getMinViolationsFilter(), (float) data.getMaxViolationsFilter());
-        rangeSliderNumViolations.addOnChangeListener((slider, value, fromUser) -> {
-            int min = Math.round(slider.getValues().get(0));
-            int max = Math.round(slider.getValues().get(1));
-            data.setViolationsRangeFilter(min, max);
-        });
-
-    }
-
     private void setupToggleButtonForInspectionFilter() {
         MaterialButtonToggleGroup toggleGroupInspections = findViewById(R.id.toggleButtonRecentInspectionHazard);
 
@@ -110,8 +96,27 @@ public class FilterActivity extends AppCompatActivity {
             }
         });
 
+    }
 
+    private void setupRangeSliderForNumViolationFilter() {
+        RangeSlider rangeSliderNumViolations = findViewById(R.id.rangeSliderNumViolations);
+        rangeSliderNumViolations.showContextMenu();
 
+        rangeSliderNumViolations.setValues((float) data.getMinViolationsFilter(), (float) data.getMaxViolationsFilter());
+        rangeSliderNumViolations.addOnChangeListener((slider, value, fromUser) -> {
+            int min = Math.round(slider.getValues().get(0));
+            int max = Math.round(slider.getValues().get(1));
+            data.setViolationsRangeFilter(min, max);
+        });
+
+    }
+
+    private void setupSwitchButtonForFavoritesFilter() {
+        SwitchCompat switchFavorites = findViewById(R.id.switchRestrictToFavorites);
+        switchFavorites.setChecked(data.isFavoritesFilter());
+        switchFavorites.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> data.setFavoritesFilter(isChecked)
+        );
     }
 
 

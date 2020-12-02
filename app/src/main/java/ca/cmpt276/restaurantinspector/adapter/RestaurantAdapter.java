@@ -28,7 +28,6 @@ import ca.cmpt276.restaurantinspector.model.Restaurant;
 import ca.cmpt276.restaurantinspector.ui.InspectionListActivity;
 
 import static androidx.core.app.ActivityCompat.startActivityForResult;
-import static androidx.core.content.ContextCompat.startActivity;
 
 /**
  * Adapter class for restaurant list RecyclerView. Populates the RecyclerView with restaurant_list_items.
@@ -173,6 +172,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
     }
 
+    // Help from: https://youtu.be/CTvzoVtKoJ8
     // Search filtering
     @Override
     public Filter getFilter() {

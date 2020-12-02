@@ -16,8 +16,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Data is a Singleton class with the restaurant data. Parses CSV and stores restaurants in a map.
@@ -38,9 +40,12 @@ public class Data {
     private String includeInspectionLevel = "ANY";
     private int maxViolationsFilter = 50;
     private int minViolationsFilter = 0;
+    private boolean isFilterToFavorites = false;
+    private final Set<String> favoritesSet = new HashSet<>();
 
     // Singleton code
     private static Data instance = null;
+
 
     private Data(){ }
 
@@ -215,6 +220,7 @@ public class Data {
 
         filterByMostRecentInspectionLevel();
         filterByViolationsWithinLastYear();
+        filterByFavorites();
     }
 
     public String getCurrentSearch() {
@@ -246,6 +252,18 @@ public class Data {
         filteredRestaurantList = newFilteredList;
     }
 
+    private void filterByFavorites() {
+        if(isFilterToFavorites) {
+            List<Restaurant> newFilteredList = new ArrayList<>();
+            for(Restaurant r : filteredRestaurantList) {
+                if (isFavorite(r)) {
+                    newFilteredList.add(r);
+                }
+            }
+            filteredRestaurantList = newFilteredList;
+        }
+    }
+
     public String getInspectionLevelFilter() {
         return includeInspectionLevel;
     }
@@ -267,5 +285,27 @@ public class Data {
 
     public int getMaxViolationsFilter() {
         return maxViolationsFilter;
+    }
+
+    public void setFavoritesFilter(boolean isFilter){
+        this.isFilterToFavorites = isFilter;
+        updateFilteredList(search);
+    }
+
+    public boolean isFavoritesFilter() {
+        return isFilterToFavorites;
+    }
+
+
+    public void addFavorite(Restaurant r) {
+        favoritesSet.add(r.getTRACKING_NUMBER());
+    }
+
+    public void removeFavorite(Restaurant r) {
+        favoritesSet.remove(r.getTRACKING_NUMBER());
+    }
+
+    public boolean isFavorite(Restaurant r) {
+        return favoritesSet.contains(r.getTRACKING_NUMBER());
     }
 }
