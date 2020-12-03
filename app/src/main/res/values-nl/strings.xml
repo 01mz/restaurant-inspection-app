@@ -40,5 +40,18 @@
     <string name="title_activity_maps">Kaart</string>
     <string name="see_list">Zie lijst</string>
     <string name="see_map">Zie kaart</string>
+    <string name="search">Zoeken</string>
+    <string name="filter">Filter</string>
+    <string name="restrict_to_favourites">Beperken tot favorieten</string>
+    <string name="cancel">annuleren</string>
+    <string name="max">Max:</string>
+    <string name="min">Min:</string>
+    <string name="number_of_violations_within_the_last_year">Aantal overtredingen in het afgelopen jaar</string>
+    <string name="hazard_level_of_most_recent_inspection">Gevarenniveau van de meest recente inspectie</string>
+    <string name="any">Ieder</string>
+    <string name="low">Laag</string>
+    <string name="moderate">Matig</string>
+    <string name="high">Hoog</string>
+    <string name="filter_restaurants">Filter restaurants</string>
 
 </resources>
