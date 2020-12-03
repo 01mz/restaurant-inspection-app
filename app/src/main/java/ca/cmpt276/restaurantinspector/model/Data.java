@@ -1,8 +1,12 @@
 package ca.cmpt276.restaurantinspector.model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.preference.PreferenceManager;
+
+import com.google.gson.Gson;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -27,6 +31,7 @@ import java.util.Set;
  * Help from: https://stackoverflow.com/questions/43055661/reading-csv-file-in-android-app
  */
 public class Data {
+    private static final String FAVORITES_SET_KEY = "IDs of favorite restaurants in a Set";
     // Map where key = Tracking number, value = Restaurant associated with tracking number
     private final Map<String, Restaurant> restaurantMap = new HashMap<>();
     private List<Restaurant> sortedRestaurantList;
@@ -41,10 +46,14 @@ public class Data {
     private int maxViolationsFilter = 50;
     private int minViolationsFilter = 0;
     private boolean isFilterToFavorites = false;
-    private final Set<String> favoritesSet = new HashSet<>();
+
+    // Favorites
+    private Set<String> favoritesSet = new HashSet<>();
+    private final List<Restaurant> updatedFavoritesList = new ArrayList<>();
 
     // Singleton code
     private static Data instance = null;
+    private boolean checkedForUpdate = false;
 
 
     private Data(){ }
@@ -78,6 +87,7 @@ public class Data {
         createSortedRestaurantList();
         sortRestaurantInspections();
         filteredRestaurantList = new ArrayList<>(sortedRestaurantList);
+        getFavoritesFromSharedPref(context);
         updateFilteredList(search);
     }
 
@@ -297,15 +307,65 @@ public class Data {
     }
 
 
-    public void addFavorite(Restaurant r) {
+    public void addFavorite(Context context, Restaurant r) {
         favoritesSet.add(r.getTRACKING_NUMBER());
+        saveFavoritesToSharedPref(context);
+        updateFilteredList(search);
     }
 
-    public void removeFavorite(Restaurant r) {
+    public void removeFavorite(Context context, Restaurant r) {
         favoritesSet.remove(r.getTRACKING_NUMBER());
+        saveFavoritesToSharedPref(context);
+        updateFilteredList(search);
     }
 
     public boolean isFavorite(Restaurant r) {
+        Log.i("debug set", favoritesSet.toString());
         return favoritesSet.contains(r.getTRACKING_NUMBER());
+    }
+
+    public Iterable<String> getFavoritesList() {
+        return () -> Collections.unmodifiableCollection(favoritesSet).iterator();
+    }
+
+    public int getNumFavorites() {
+        return favoritesSet.size();
+    }
+
+    private void saveFavoritesToSharedPref(Context context) {
+        Gson gson = new Gson();
+        getPrefs(context).edit()
+                .putString(FAVORITES_SET_KEY, gson.toJson(favoritesSet)).apply();
+    }
+
+    private void getFavoritesFromSharedPref(Context context) {
+        Gson gson = new Gson();
+        String json = getPrefs(context).getString(FAVORITES_SET_KEY,
+                gson.toJson(new HashSet<>())); // default is empty HashSet
+        favoritesSet = gson.fromJson(json, Set.class);
+    }
+
+    private SharedPreferences getPrefs(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    public void addToUpdatedFavoritesList(Restaurant r) {
+        updatedFavoritesList.add(r);
+    }
+
+    public List<Restaurant> getUpdatedFavoritesList() {
+        return Collections.unmodifiableList(updatedFavoritesList);
+    }
+
+    public void clearUpdatedFavoritesList() {
+        updatedFavoritesList.clear();
+    }
+
+    public void setCheckedForUpdate(boolean checked) {
+        this.checkedForUpdate = checked;
+    }
+
+    public boolean isCheckedForUpdate() {
+        return checkedForUpdate;
     }
 }

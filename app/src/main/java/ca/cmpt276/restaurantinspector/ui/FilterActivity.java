@@ -118,7 +118,7 @@ public class FilterActivity extends AppCompatActivity {
                 (buttonView, isChecked) -> data.setFavoritesFilter(isChecked)
         );
     }
-
+    
 
 
 }

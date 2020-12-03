@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.FragmentManager;
@@ -28,7 +27,6 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Objects;
 
 import ca.cmpt276.restaurantinspector.R;
 import ca.cmpt276.restaurantinspector.adapter.RestaurantAdapter;
@@ -75,10 +73,6 @@ public class RestaurantListActivity extends AppCompatActivity {
         setupRestaurantListRecyclerView();
         updateFiles();
 
-//        // Hide action bar
-//        ActionBar ab = getSupportActionBar();
-//        Objects.requireNonNull(ab).hide();
-
         Button buttonSeeMap = findViewById(R.id.buttonSeeMap);
         buttonSeeMap.setOnClickListener(v -> {
             setResult(Activity.RESULT_OK, null);
@@ -95,11 +89,6 @@ public class RestaurantListActivity extends AppCompatActivity {
 
         restaurantAdapter = new RestaurantAdapter(list, RestaurantListActivity.this);
         recyclerView.setAdapter(restaurantAdapter);
-    }
-
-    private void initializeModel() {
-        data = Data.getInstance();
-        data.init(this);    // must init before use
     }
 
     private void showUpdateChoiceDialog() {
@@ -120,6 +109,11 @@ public class RestaurantListActivity extends AppCompatActivity {
     }
 
     private void updateFiles() {
+        // if we already checked for updates in this session, do not check for update
+        if(data.isCheckedForUpdate()) {
+            return;
+        }
+
         // if the last update was within the last 20 hrs, do not check for update
         if (isLastUpdateWithinLastTwentyHours()) {
             return;
@@ -128,6 +122,7 @@ public class RestaurantListActivity extends AppCompatActivity {
         /* Check for updates and notify user if updates are available: */
 
         Toast.makeText(this, R.string.checking_for_updates, Toast.LENGTH_SHORT).show();
+        data.setCheckedForUpdate(true);
 
         // Use ion library to download files (source and some code taken from: https://github.com/koush/ion)
         // Get restaurants JSON
@@ -252,12 +247,39 @@ public class RestaurantListActivity extends AppCompatActivity {
         final File restaurantsCsvFile = new File(getExternalFilesDir(null), RESTAURANTS_CSV_FILENAME);
         final File inspectionsCsvFileTemp = new File(getExternalFilesDir(null), INSPECTIONS_CSV_FILENAME + "temp");
         final File inspectionsCsvFile = new File(getExternalFilesDir(null), INSPECTIONS_CSV_FILENAME);
+
         restaurantsCsvFileTemp.renameTo(restaurantsCsvFile);
         inspectionsCsvFileTemp.renameTo(inspectionsCsvFile);
 
+        // For each favorite restaurant, compare the number of inspections before and after the update.
+        // If there is a difference between the number of inspections then the restaurant has new inspections.
+        int[] numInspectionsOld = new int[data.getNumFavorites()];
+        int i = 0;
+        for (String restaurantId : data.getFavoritesList()) {
+            Restaurant r = data.getRestaurantByTrackingNumber(restaurantId);
+            numInspectionsOld[i] = r.getNumInspections();
+            i++;
+        }
+
         data.init(RestaurantListActivity.this);
 
+        int j = 0;
+        for (String restaurantId : data.getFavoritesList()) {
+            Restaurant r = data.getRestaurantByTrackingNumber(restaurantId);
+            if(numInspectionsOld[j] != r.getNumInspections()){
+                data.addToUpdatedFavoritesList(r);
+            }
+            j++;
+        }
+
         setupRestaurantListRecyclerView();
+
+        // if at least one favorite restaurant has new inspections, show in FavoritesUpdatedActivity
+        if(data.getUpdatedFavoritesList().size() > 0){
+            startActivity(FavoritesUpdatedActivity.makeLaunch(this));
+        } else {
+            Toast.makeText(this, R.string.no_fav_restaurants_updated, Toast.LENGTH_LONG).show();
+        }
 
         // update last modified
         getPrefs(RestaurantListActivity.this).edit()
@@ -321,10 +343,13 @@ public class RestaurantListActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, intent);
         switch (requestCode) {
             case REQUEST_CODE_INSPECTION_LIST:
-                // use intent
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK) { // GPS button clicked
                     setResult(Activity.RESULT_OK, intent);
                     finish();
+                } else { // back button
+                    // update for favorites
+                    restaurantAdapter.updateDataSet();
+                    data.setUpdated(true);
                 }
                 break;
             case REQUEST_CODE_FILTER:
@@ -340,13 +365,10 @@ public class RestaurantListActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_search, menu);
 
         MenuItem filterItem = menu.findItem(R.id.action_filter);
-        filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                startActivityForResult(FilterActivity.makeLaunch(RestaurantListActivity.this), REQUEST_CODE_FILTER);
+        filterItem.setOnMenuItemClickListener(item -> {
+            startActivityForResult(FilterActivity.makeLaunch(RestaurantListActivity.this), REQUEST_CODE_FILTER);
 
-                return true;
-            }
+            return true;
         });
 
         MenuItem item = menu.findItem(R.id.action_search);
