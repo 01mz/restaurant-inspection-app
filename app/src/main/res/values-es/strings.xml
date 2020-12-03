@@ -53,6 +53,9 @@
     <string name="moderate">Moderado</string>
     <string name="high">Alto</string>
     <string name="filter_restaurants">Filtrar restaurantes</string>
+    <string name="favorite">Favorito</string>
+    <string name="favorite_restaurants_new_inspections">Los siguientes restaurantes favoritos tienen nuevas inspecciones:</string>
+    <string name="no_fav_restaurants_updated">Ningún restaurante favorito tiene nuevas inspecciones</string>
 
 
 </resources>

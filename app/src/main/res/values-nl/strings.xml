@@ -53,5 +53,8 @@
     <string name="moderate">Matig</string>
     <string name="high">Hoog</string>
     <string name="filter_restaurants">Filter restaurants</string>
+    <string name="favorite">Favoriete</string>
+    <string name="favorite_restaurants_new_inspections">De volgende favoriete restaurants hebben nieuwe keuringen:</string>
+    <string name="no_fav_restaurants_updated">Geen enkel favoriet restaurant heeft nieuwe inspecties</string>
 
 </resources>
