@@ -321,10 +321,13 @@ public class RestaurantListActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, intent);
         switch (requestCode) {
             case REQUEST_CODE_INSPECTION_LIST:
-                // use intent
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK) { // GPS button clicked
                     setResult(Activity.RESULT_OK, intent);
                     finish();
+                } else { // back button
+                    // update for favorites
+                    restaurantAdapter.updateDataSet();
+                    data.setUpdated(true);
                 }
                 break;
             case REQUEST_CODE_FILTER:
@@ -340,13 +343,10 @@ public class RestaurantListActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_search, menu);
 
         MenuItem filterItem = menu.findItem(R.id.action_filter);
-        filterItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                startActivityForResult(FilterActivity.makeLaunch(RestaurantListActivity.this), REQUEST_CODE_FILTER);
+        filterItem.setOnMenuItemClickListener(item -> {
+            startActivityForResult(FilterActivity.makeLaunch(RestaurantListActivity.this), REQUEST_CODE_FILTER);
 
-                return true;
-            }
+            return true;
         });
 
         MenuItem item = menu.findItem(R.id.action_search);

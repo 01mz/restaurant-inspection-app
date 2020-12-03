@@ -53,5 +53,6 @@
     <string name="moderate">Moderate</string>
     <string name="high">High</string>
     <string name="filter_restaurants">Filter restaurants</string>
+    <string name="favorite">Favorite</string>
 
 </resources>

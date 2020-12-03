@@ -3,6 +3,9 @@ package ca.cmpt276.restaurantinspector.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +40,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     private static final int REQUEST_CODE_INSPECTION_LIST = 102;
     List<Restaurant> restaurantList;
     Context context;
+    private final Data data = Data.getInstance();
 
     public RestaurantAdapter(List<Restaurant> restaurantList, Context context) {
         this.restaurantList = new ArrayList<>(restaurantList);
@@ -54,8 +58,13 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         Restaurant restaurant = restaurantList.get(position);
+        if(data.isFavorite(restaurant)) {
+            holder.itemView.setBackgroundColor(Color.argb(70, 255, 255, 0)); // yellow
+        } else {
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+        }
+
         if(restaurant.getNAME().contains("A & W")){
             holder.imageViewRestaurantLogo.setImageResource(R.drawable.a_and_w);
         }else if (restaurant.getNAME().contains("A&W")){
@@ -180,7 +189,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     }
 
     Filter filter = new Filter() {
-        final Data data = Data.getInstance();
         // background thread
         @Override
         protected FilterResults performFiltering(CharSequence constraint /* user search text */) {

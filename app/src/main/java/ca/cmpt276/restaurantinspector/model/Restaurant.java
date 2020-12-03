@@ -86,7 +86,7 @@ public class Restaurant {
         numViolationsWithinLastYear = 0;
         for (Inspection inspection : inspectionList) {
             if(inspection.getINSPECTION_DATE().isWithinLastYear()){
-                numViolationsWithinLastYear += inspection.getTotalIssues();
+                numViolationsWithinLastYear += inspection.getNUM_CRITICAL();
             }
         }
     }

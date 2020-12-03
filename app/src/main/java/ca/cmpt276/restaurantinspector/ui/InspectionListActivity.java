@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,6 +32,7 @@ import ca.cmpt276.restaurantinspector.model.Restaurant;
  */
 public class InspectionListActivity extends AppCompatActivity {
     Data data = Data.getInstance();
+    private int restaurantPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,36 +41,55 @@ public class InspectionListActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
 
-        int restaurantPosition = Objects.requireNonNull(extras).getInt("position");
-        setupRestaurantInfoTextViews(restaurantPosition);
-        setupInspectionsListRecyclerView(restaurantPosition);
+
+
+        restaurantPosition = getIntent().getIntExtra("position", 0);
+        setupRestaurantInfoTextViews();
+        setupInspectionsListRecyclerView();
+        setupFavoriteCheckButton();
 
         // Enable "up" on toolbar
         ActionBar ab = getSupportActionBar();
         Objects.requireNonNull(ab).setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setupRestaurantInfoTextViews(int position) {
+    private void setupFavoriteCheckButton() {
+
+    }
+
+    private void setupRestaurantInfoTextViews() {
         TextView restaurantName = findViewById(R.id.RestaurantName);
         TextView restaurantAddress = findViewById(R.id.restaurantAddress);
         //TextView restaurantGPS = findViewById(R.id.restaurantGPS);
         Button restaurantGPS = findViewById(R.id.buttonGps);
 
+        CheckBox checkBox = findViewById(R.id.checkBoxFavorite);
 
-        Restaurant restaurant = data.getRestaurant(position);
+
+
+        Restaurant restaurant = data.getRestaurant(restaurantPosition);
         restaurantName.setText(restaurant.getNAME());
         restaurantAddress.setText(restaurant.getADDRESS());
         String gps = String.format("%s, %s", restaurant.getLATITUDE(), restaurant.getLONGITUDE());
         restaurantGPS.setText(gps);
         restaurantGPS.setOnClickListener(v -> {
             Intent i = new Intent();
-            i.putExtra("position", position);
+            i.putExtra("position", restaurantPosition);
             setResult(Activity.RESULT_OK, i);
             finish();
         });
+
+        checkBox.setChecked(data.isFavorite(restaurant));
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked) {
+                data.addFavorite(InspectionListActivity.this, restaurant);
+            } else {
+                data.removeFavorite(InspectionListActivity.this, restaurant);
+            }
+        });
     }
 
-    private void setupInspectionsListRecyclerView(int restaurantPosition) {
+    private void setupInspectionsListRecyclerView() {
         if(!data.getRestaurant(restaurantPosition).hasInspection()){
             TextView inspectionTitle = findViewById(R.id.textViewInspections);
             inspectionTitle.setText(R.string.no_inspections_yet);
@@ -95,13 +117,11 @@ public class InspectionListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()){
-            case android.R.id.home:
-                setResult(Activity.RESULT_CANCELED);
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            setResult(Activity.RESULT_CANCELED);
+            finish();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 }
