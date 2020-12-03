@@ -43,7 +43,7 @@ public class Data {
 
     // Filtering
     private String includeInspectionLevel = "ANY";
-    private int maxViolationsFilter = 50;
+    private int maxViolationsFilter = 30;
     private int minViolationsFilter = 0;
     private boolean isFilterToFavorites = false;
 
