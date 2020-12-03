@@ -1,14 +1,10 @@
 package ca.cmpt276.restaurantinspector.adapter;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import ca.cmpt276.restaurantinspector.R;
@@ -26,21 +21,18 @@ import ca.cmpt276.restaurantinspector.model.Data;
 import ca.cmpt276.restaurantinspector.model.Inspection;
 import ca.cmpt276.restaurantinspector.model.InspectionDate;
 import ca.cmpt276.restaurantinspector.model.Restaurant;
-import ca.cmpt276.restaurantinspector.ui.InspectionListActivity;
-
-import static androidx.core.app.ActivityCompat.startActivityForResult;
 
 /**
- * Adapter class for restaurant list RecyclerView. Populates the RecyclerView with restaurant_list_items.
+ * Adapter class for FavoritesUpdatedActivity RecyclerView. Populates the RecyclerView with restaurant_list_items.
  */
-public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.ViewHolder> implements Filterable {
+public class FavoritesUpdatedAdapter extends RecyclerView.Adapter<FavoritesUpdatedAdapter.ViewHolder>{
 
-    private static final int REQUEST_CODE_INSPECTION_LIST = 102;
+
     List<Restaurant> restaurantList;
     Context context;
     private final Data data = Data.getInstance();
 
-    public RestaurantAdapter(List<Restaurant> restaurantList, Context context) {
+    public FavoritesUpdatedAdapter(List<Restaurant> restaurantList, Context context) {
         this.restaurantList = new ArrayList<>(restaurantList);
         this.context = context;
     }
@@ -125,15 +117,6 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         }
 
 
-        holder.itemView.setOnClickListener(v -> {
-            Intent i= InspectionListActivity.makeLaunch(context);
-            i.putExtra("position", position);
-            i.putExtra("name", restaurant.getNAME());
-            i.putExtra("address", restaurant.getADDRESS());
-            i.putExtra("latitude", restaurant.getLATITUDE());
-            i.putExtra("longitude", restaurant.getLONGITUDE());
-            startActivityForResult((Activity)context, i, REQUEST_CODE_INSPECTION_LIST, null);
-        });
 
     }
 
@@ -178,47 +161,5 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
         }
 
     }
-
-    // Help from: https://youtu.be/CTvzoVtKoJ8
-    // Search filtering
-    @Override
-    public Filter getFilter() {
-        return filter;
-    }
-
-    Filter filter = new Filter() {
-        // background thread
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint /* user search text */) {
-            data.setUpdated(true);
-            String search = constraint.toString().trim().toLowerCase(); // case insensitive search
-
-            // get filtered restaurants
-            data.updateFilteredList(search);
-            List<Restaurant> filteredList = new ArrayList<>(data.getRestaurantList());
-
-
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-            return filterResults;
-        }
-
-        // ui thread
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            restaurantList.clear();
-            restaurantList.addAll((Collection<? extends Restaurant>) results.values);
-            notifyDataSetChanged();
-
-        }
-    };
-
-
-    public void updateDataSet() {
-        restaurantList.clear();
-        restaurantList.addAll(Data.getInstance().getRestaurantList());
-        notifyDataSetChanged();
-    }
-
 
 }

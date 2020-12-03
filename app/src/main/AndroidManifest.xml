@@ -19,12 +19,14 @@
         android:roundIcon="@drawable/app_icon_search"
         android:supportsRtl="true"
         android:theme="@style/Theme.RestaurantInspector">
-        <activity android:name=".ui.FilterActivity"
+        <activity android:name=".ui.FavoritesUpdatedActivity"
+            android:configChanges="keyboard|orientation|keyboardHidden|screenSize"/>
+        <activity
+            android:name=".ui.FilterActivity"
             android:configChanges="keyboard|orientation|keyboardHidden|screenSize"
             android:label="@string/filter_restaurants"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
