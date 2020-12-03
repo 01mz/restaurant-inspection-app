@@ -98,7 +98,7 @@ public class Restaurant {
         return numViolationsWithinLastYear;
     }
 
-
-
-
+    public int getNumInspections() {
+        return inspectionList.size();
+    }
 }

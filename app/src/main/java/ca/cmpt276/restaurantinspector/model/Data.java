@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,10 +46,14 @@ public class Data {
     private int maxViolationsFilter = 50;
     private int minViolationsFilter = 0;
     private boolean isFilterToFavorites = false;
+
+    // Favorites
     private Set<String> favoritesSet = new HashSet<>();
+    private final List<Restaurant> updatedFavoritesList = new ArrayList<>();
 
     // Singleton code
     private static Data instance = null;
+    private boolean checkedForUpdate = false;
 
 
     private Data(){ }
@@ -321,8 +324,12 @@ public class Data {
         return favoritesSet.contains(r.getTRACKING_NUMBER());
     }
 
-    public Iterator<String> getFavoritesList() {
-        return  Collections.unmodifiableCollection(favoritesSet).iterator();
+    public Iterable<String> getFavoritesList() {
+        return () -> Collections.unmodifiableCollection(favoritesSet).iterator();
+    }
+
+    public int getNumFavorites() {
+        return favoritesSet.size();
     }
 
     private void saveFavoritesToSharedPref(Context context) {
@@ -342,4 +349,23 @@ public class Data {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
+    public void addToUpdatedFavoritesList(Restaurant r) {
+        updatedFavoritesList.add(r);
+    }
+
+    public List<Restaurant> getUpdatedFavoritesList() {
+        return Collections.unmodifiableList(updatedFavoritesList);
+    }
+
+    public void clearUpdatedFavoritesList() {
+        updatedFavoritesList.clear();
+    }
+
+    public void setCheckedForUpdate(boolean checked) {
+        this.checkedForUpdate = checked;
+    }
+
+    public boolean isCheckedForUpdate() {
+        return checkedForUpdate;
+    }
 }

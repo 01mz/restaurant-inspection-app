@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,23 +38,15 @@ public class InspectionListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inspection_list);
 
-        Bundle extras = getIntent().getExtras();
-
-
-
         restaurantPosition = getIntent().getIntExtra("position", 0);
         setupRestaurantInfoTextViews();
         setupInspectionsListRecyclerView();
-        setupFavoriteCheckButton();
 
         // Enable "up" on toolbar
         ActionBar ab = getSupportActionBar();
         Objects.requireNonNull(ab).setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setupFavoriteCheckButton() {
-
-    }
 
     private void setupRestaurantInfoTextViews() {
         TextView restaurantName = findViewById(R.id.RestaurantName);
@@ -65,9 +56,8 @@ public class InspectionListActivity extends AppCompatActivity {
 
         CheckBox checkBox = findViewById(R.id.checkBoxFavorite);
 
-
-
         Restaurant restaurant = data.getRestaurant(restaurantPosition);
+
         restaurantName.setText(restaurant.getNAME());
         restaurantAddress.setText(restaurant.getADDRESS());
         String gps = String.format("%s, %s", restaurant.getLATITUDE(), restaurant.getLONGITUDE());
