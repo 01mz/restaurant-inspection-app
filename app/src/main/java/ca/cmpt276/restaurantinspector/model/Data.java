@@ -1,39 +1,25 @@
 package ca.cmpt276.restaurantinspector.model;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.preference.PreferenceManager;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.koushikdutta.ion.Ion;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
-
-import ca.cmpt276.restaurantinspector.ui.RestaurantListActivity;
+import java.util.Set;
 
 /**
  * Data is a Singleton class with the restaurant data. Parses CSV and stores restaurants in a map.
@@ -45,9 +31,21 @@ public class Data {
     private final Map<String, Restaurant> restaurantMap = new HashMap<>();
     private List<Restaurant> sortedRestaurantList;
 
+    // Search
+    private List<Restaurant> filteredRestaurantList;
+    private boolean isUpdated = false;
+    private String search = "";
+
+    // Filtering
+    private String includeInspectionLevel = "ANY";
+    private int maxViolationsFilter = 50;
+    private int minViolationsFilter = 0;
+    private boolean isFilterToFavorites = false;
+    private final Set<String> favoritesSet = new HashSet<>();
+
     // Singleton code
     private static Data instance = null;
-    private boolean isUpdated = false;
+
 
     private Data(){ }
 
@@ -60,11 +58,11 @@ public class Data {
 
     // Returns a list of Restaurants in alphabetical order by name
     public List<Restaurant> getRestaurantList() {
-        return Collections.unmodifiableList(sortedRestaurantList);
+        return Collections.unmodifiableList(filteredRestaurantList);
     }
 
     public Restaurant getRestaurant(int index) {
-        return sortedRestaurantList.get(index);
+        return filteredRestaurantList.get(index);
     }
 
     public Restaurant getRestaurantByTrackingNumber(String trackingNumber){
@@ -79,6 +77,8 @@ public class Data {
 
         createSortedRestaurantList();
         sortRestaurantInspections();
+        filteredRestaurantList = new ArrayList<>(sortedRestaurantList);
+        updateFilteredList(search);
     }
 
     private void convertRestaurantCSV(Context context) {
@@ -184,6 +184,11 @@ public class Data {
     private void sortRestaurantInspections() {
         for(Restaurant r : sortedRestaurantList){
             r.sortInspectionsByDate();
+            r.calculateNumViolationsWithinLastYear();
+            if(r.getNumViolationsWithinLastYear() > 20) {
+
+                Log.i("violations past year", "" + r.getNumViolationsWithinLastYear() );
+            }
         }
     }
 
@@ -194,5 +199,113 @@ public class Data {
 
     public void setUpdated(boolean updated){
         isUpdated = updated;
+    }
+
+    public void updateFilteredList(String search) {
+        this.search = search;
+        filteredRestaurantList.clear();
+        if(search.isEmpty()) {
+            // add all restaurants
+            filteredRestaurantList.addAll(sortedRestaurantList);
+
+        } else {
+            // add filtered restaurants
+            for(Restaurant r : sortedRestaurantList) {
+                if(r.getNAME().toLowerCase().contains(search)) {
+                    filteredRestaurantList.add(r);
+
+                }
+            }
+        }
+
+        filterByMostRecentInspectionLevel();
+        filterByViolationsWithinLastYear();
+        filterByFavorites();
+    }
+
+    public String getCurrentSearch() {
+        return search;
+    }
+
+    private void filterByMostRecentInspectionLevel() {
+        if (!includeInspectionLevel.equalsIgnoreCase("ANY")) {
+            List<Restaurant> newFilteredList = new ArrayList<>();
+            for (Restaurant r : filteredRestaurantList) {
+                if(r.hasInspection()) {
+                    String mostRecentHazardLevel = r.getMostRecentInspection().getHAZARD_RATING();
+                    if (includeInspectionLevel.equalsIgnoreCase(mostRecentHazardLevel)) {
+                        newFilteredList.add(r);
+                    }
+                }
+            }
+            filteredRestaurantList = newFilteredList;
+        }
+    }
+
+    private void filterByViolationsWithinLastYear() {
+        List<Restaurant> newFilteredList = new ArrayList<>();
+        for(Restaurant r : filteredRestaurantList) {
+            if (r.getNumViolationsWithinLastYear() >= minViolationsFilter && r.getNumViolationsWithinLastYear() <= maxViolationsFilter) {
+               newFilteredList.add(r);
+            }
+        }
+        filteredRestaurantList = newFilteredList;
+    }
+
+    private void filterByFavorites() {
+        if(isFilterToFavorites) {
+            List<Restaurant> newFilteredList = new ArrayList<>();
+            for(Restaurant r : filteredRestaurantList) {
+                if (isFavorite(r)) {
+                    newFilteredList.add(r);
+                }
+            }
+            filteredRestaurantList = newFilteredList;
+        }
+    }
+
+    public String getInspectionLevelFilter() {
+        return includeInspectionLevel;
+    }
+
+    public void setMostRecentInspectionHazardFilter(String level) {
+        this.includeInspectionLevel = level;
+        updateFilteredList(search);
+    }
+
+    public void setViolationsRangeFilter(int min, int max) {
+        minViolationsFilter = min;
+        maxViolationsFilter = max;
+        updateFilteredList(search);
+    }
+
+    public int getMinViolationsFilter() {
+        return minViolationsFilter;
+    }
+
+    public int getMaxViolationsFilter() {
+        return maxViolationsFilter;
+    }
+
+    public void setFavoritesFilter(boolean isFilter){
+        this.isFilterToFavorites = isFilter;
+        updateFilteredList(search);
+    }
+
+    public boolean isFavoritesFilter() {
+        return isFilterToFavorites;
+    }
+
+
+    public void addFavorite(Restaurant r) {
+        favoritesSet.add(r.getTRACKING_NUMBER());
+    }
+
+    public void removeFavorite(Restaurant r) {
+        favoritesSet.remove(r.getTRACKING_NUMBER());
+    }
+
+    public boolean isFavorite(Restaurant r) {
+        return favoritesSet.contains(r.getTRACKING_NUMBER());
     }
 }

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -54,18 +53,18 @@ public class InspectionListActivity extends AppCompatActivity {
         //TextView restaurantGPS = findViewById(R.id.restaurantGPS);
         Button restaurantGPS = findViewById(R.id.buttonGps);
 
-        restaurantGPS.setOnClickListener(v -> {
-            Intent i = new Intent();
-            i.putExtra("position", position);
-            setResult(Activity.RESULT_OK, i);
-            finish();
-        });
 
         Restaurant restaurant = data.getRestaurant(position);
         restaurantName.setText(restaurant.getNAME());
         restaurantAddress.setText(restaurant.getADDRESS());
         String gps = String.format("%s, %s", restaurant.getLATITUDE(), restaurant.getLONGITUDE());
         restaurantGPS.setText(gps);
+        restaurantGPS.setOnClickListener(v -> {
+            Intent i = new Intent();
+            i.putExtra("position", position);
+            setResult(Activity.RESULT_OK, i);
+            finish();
+        });
     }
 
     private void setupInspectionsListRecyclerView(int restaurantPosition) {
