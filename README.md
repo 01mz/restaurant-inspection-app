@@ -9,21 +9,28 @@
 Map view with search and filter
 <br> 
 <img src="images/permissions.jpg" width="200" >
+
 <img src="images/mapview_zoomedout.jpg" width="200" height="400">
+
 <img src="images/mapview_zoomedin.jpg" width="200" height="400">
+
 <img src="images/maview_singlerestaurant.jpg" width="200" height="400">
 <br> 
 Scrollable list with search and filter. Favorited restaurants are highlighted
+<br>
 <img src="images/listview_filtered.jpg" width="200" height="400">
 <img src="images/listview_7eleven.jpg" width="200" height="400">
 <br>
 Filter restaurants by hazard level, number of violations, or favorites
+<br>
 <img src="images/filter_changed.jpg" width="200" height="400">
 <br>
 Restaurant details
+<br>
 <img src="images/restaurant.jpg" width="200" height="400">
 <br>
 Update inspection data
+<br>
 <img src="images/update_available2.jpg" width="200" height="400">
 <img src="images/downloading.jpg" width="200" height="400">
 <br>
