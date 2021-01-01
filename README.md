@@ -5,22 +5,21 @@
 
 <!-- USAGE EXAMPLES -->
 ## Screenshots
+<div >
+ <br>
+<img src="images/permissions.jpg" width="200" >
+ <br>
+<img src="images/mapview_zoomedout.jpg" width="200" height="400">
+<img src="images/mapview_zoomedin.jpg" width="200" height="400">
+<img src="images/maview_singlerestaurant.jpg" width="200" height="400">
+<img src="images/listview_filtered.jpg" width="200" height="400">
+<img src="images/listview_7eleven.jpg" width="200" height="400">
+<img src="images/restaurant.jpg" width="200" height="400">
+<img src="images/filter_changed.jpg" width="200" height="400">
+<img src="images/update_available2.jpg" width="200" height="400">
+<img src="images/downloading.jpg" width="200" height="400">
+ </div>
 
-![permissions.jpg](images/permissions.jpg)
-![mapview_zoomedout](images/mapview_zoomedout.jpg)
-![mapview_zoomedin](images/mapview_zoomedin.jpg)
-![mapview_singlerestaurant](images/maview_singlerestaurant.jpg)
-
-
-![listview_filtered.jpg](images/listview_filtered.jpg)
-![listview_7eleven.jpg](images/listview_7eleven.jpg)
-
-![restaurant.jpg](images/restaurant.jpg)
-
-![filter_changed.jpg](images/filter_changed.jpg)
-
-![update_available2.jpg](images/update_available2.jpg)
-![downloading.jpg](images/downloading.jpg)
 
 
 
