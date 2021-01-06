@@ -1,7 +1,7 @@
 # Restaurant Inspection App
 
- Android app to browse restaurant health inspection in the Surrey region. 
- The app fetches inspection data from City of Surrey's Open Data API and displays it in a scrollable list view or a map view using Google Maps API.
+ Android app to browse restaurant health inspections in the Surrey region. 
+ The app fetches inspection data from City of Surrey's Open Data API and displays it in a scrollable list and a map view using Google Maps API.
  
  ## Installation
 
